@@ -8,7 +8,12 @@ function SongfestCreationPopup() {
                 <label htmlFor="songs per person">Songs per person:</label> <br></br>
                 <input type="number" id="songs per person" required/> <br></br>
 
-                <button>Submit</button>
+                <button onSubmit={(event) => {
+                    event.preventDefault()
+                    return false
+                }}>
+                    Submit
+                </button>
             </form>
         </>
     )
