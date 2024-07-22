@@ -6,9 +6,7 @@ function SongfestSubmissionPopup() {
     const SongfestStatus = useContext(SongfestStatusContext)
     const [participant, setParticipant] = useState<string | null>(null)
     const [query, setQuery] = useState<string>("")
-
-    // if the participant is not null, try to get the array of songs they have saved. Empty if no saved songs, or no participant
-    const participantSongs = ((participant != null) ? (SongfestStatus.songs[participant] ?? []) : [])
+    const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus.songsPerPerson}).map((value) => ""))
 
     return (
         <>
@@ -17,7 +15,18 @@ function SongfestSubmissionPopup() {
                 {/* the combobox is connected to the participant state variable and updates it when an option is selected */}
                 {/* the combobox also sets the query to "" when closing the box (clears the text)*/}
                 <p>Name:</p>
-                <Combobox value={participant} onChange={setParticipant} onClose={() => setQuery("")} immediate>
+                <Combobox value={participant} onChange={(value) => {
+                    // set the participant
+                    setParticipant(value)
+                    // console.log(value)
+                    // if the participant is not null, try to get the array of songs they have saved. Empty if no saved songs, or no participant
+                    const participantSongs = ((value != null) ? (SongfestStatus.songs[value] ?? null) : null)
+                    // console.log(participantSongs)
+                    // set the songs to the particpant's songs that they've entered previously (if they exist)
+                    if (participantSongs != null) {
+                        setSongs(participantSongs)
+                    }
+                }} onClose={() => setQuery("")} immediate>
                     {/* the query state variable updates to match what the user types */}
                     <ComboboxInput onChange={(event) => setQuery(event.target.value)} displayValue={(person: string) => person}/>
                     <ComboboxOptions anchor="bottom start">
@@ -48,7 +57,14 @@ function SongfestSubmissionPopup() {
                     return (
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
-                            <input type="url" defaultValue={participantSongs[index] ?? ""} id={"song" + (index + 1)}></input>
+                            <input type="url" value={songs[index] ?? ""} id={"song" + (index + 1)}
+                            onChange={(event) => {
+                                let copy = [...songs]
+                                copy[index] = event.target.value
+                                console.log(copy)
+                                setSongs(copy)
+                            }}
+                            ></input>
                         </div>
                     )
                 })}
