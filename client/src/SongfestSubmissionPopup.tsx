@@ -4,9 +4,11 @@ import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headl
 
 function SongfestSubmissionPopup() {
     const SongfestStatus = useContext(SongfestStatusContext)
-    const [participant, setParticipant] = useState(null)
-    const [query, setQuery] = useState("")
-    const [savedSongs, setSavedSongs] = useState([])
+    const [participant, setParticipant] = useState<string | null>(null)
+    const [query, setQuery] = useState<string>("")
+
+    // if the participant is not null, try to get the array of songs they have saved. Empty if no saved songs, or no participant
+    const participantSongs = ((participant != null) ? (SongfestStatus.songs[participant] ?? []) : [])
 
     return (
         <>
@@ -15,7 +17,14 @@ function SongfestSubmissionPopup() {
                 <Combobox value={participant} onChange={setParticipant} onClose={() => setQuery("")} immediate>
                     <ComboboxInput onChange={(event) => setQuery(event.target.value)} displayValue={(person: string) => person}/>
                     <ComboboxOptions anchor="bottom start">
-                        {SongfestStatus.participants.map((person, index) => (
+                        {query.trim().length > 0 && !SongfestStatus.participants.includes(query) && (
+                        <ComboboxOption value={query}>
+                            Create <span className="font-bold">"{query}"</span>
+                        </ComboboxOption>
+                        )}
+                        {SongfestStatus.participants.filter((person) => {
+                            return person.toLowerCase().includes(query.toLowerCase())
+                        }).map((person, index) => (
                             <ComboboxOption value={person} key={index}>
                                 {person}
                             </ComboboxOption>
@@ -24,12 +33,12 @@ function SongfestSubmissionPopup() {
                 </Combobox>
                 <br></br>
 
-                {Array.from({length: (SongfestStatus?.songsPerPerson as number)}).map((_, index) => {
+                {Array.from({length: SongfestStatus.songsPerPerson}).map((_, index) => {
                     return (
-                        <Fragment key={"song" + (index + 1)}>
+                        <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
-                            <input type="url" defaultValue={savedSongs[index] ?? ""} id={"song" + (index + 1)}></input> <br></br>
-                        </Fragment>
+                            <input type="url" defaultValue={participantSongs[index] ?? ""} id={"song" + (index + 1)}></input>
+                        </div>
                     )
                 })}
 

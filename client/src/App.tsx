@@ -27,7 +27,7 @@ function App() {
             "test3": ["suzume"]
         },
         setSongs: setSongs,
-        songsPerPerson: 1,
+        songsPerPerson: 2,
         setSongsPerPerson: setSongsPerPerson
     }
 
