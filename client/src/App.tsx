@@ -1,42 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useContext, useState } from 'react'
 import './App.css'
 import { io } from 'socket.io-client'
+import SongfestClosed from './SongfestClosed'
+import SongfestOpen from './SongfestOpen'
+import SongfestStatusContext from './SongfestStatusContext'
+import SongfestCreationPopup from './SongfestCreationPopup'
+import SongfestSubmissionPopup from './SongfestSubmissionPopup'
 
 // connect to socket server
 const socket = io()
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [songfestOpen, setSongfestOpen] = useState(false)
+    const [participants, setParticipants] = useState([])
+    const [songs, setSongs] = useState({})
+    const [songsPerPerson, setSongsPerPerson] = useState(1)
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => {
-            setCount((count) => count + 1)
-            socket.emit("test")
-        }}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <>
+            <SongfestStatusContext.Provider value={{
+                songfestOpen: songfestOpen,
+                setSongfestOpen: setSongfestOpen,
+                participants: participants,
+                setParticipants: setParticipants,
+                songs: songs,
+                setSongs: setSongs,
+                songsPerPerson: songsPerPerson,
+                setSongsPerPerson: setSongsPerPerson
+            }}>
+                <SongfestCreationPopup/>
+                {songfestOpen ? <SongfestOpen/> : <SongfestClosed/>}
+                <SongfestSubmissionPopup/>
+            </SongfestStatusContext.Provider>
+        </>
+    )
 }
 
 export default App
