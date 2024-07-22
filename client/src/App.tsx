@@ -36,7 +36,7 @@ function App() {
             <h1 className="text-3xl font-bold underline">
                 Hello world!
             </h1>
-            {/* <SongfestStatusContext.Provider value={{
+            <SongfestStatusContext.Provider value={{
                 songfestOpen: songfestOpen,
                 setSongfestOpen: setSongfestOpen,
                 participants: participants,
@@ -45,8 +45,8 @@ function App() {
                 setSongs: setSongs,
                 songsPerPerson: songsPerPerson,
                 setSongsPerPerson: setSongsPerPerson
-            }}> */}
-            <SongfestStatusContext.Provider value={sampleContextData}>
+            }}>
+            {/* <SongfestStatusContext.Provider value={sampleContextData}> */}
                 <SongfestCreationPopup/>
                 {songfestOpen ? <SongfestOpen/> : <SongfestClosed/>}
                 <SongfestSubmissionPopup/>

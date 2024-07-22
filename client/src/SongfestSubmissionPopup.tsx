@@ -56,7 +56,7 @@ function SongfestSubmissionPopup() {
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
                             {/* the value of the input matches the songs state */}
-                            <input type="url" value={songs[index] ?? ""} id={"song" + (index + 1)}
+                            <input type="text" value={songs[index] ?? ""} id={"song" + (index + 1)}
                             // when a change is made to the input, the songs state is updated accordingly
                             onChange={(event) => {
                                 let copy = [...songs]
@@ -69,10 +69,20 @@ function SongfestSubmissionPopup() {
                     )
                 })}
 
-                {/* the submit button currently just does preventDefault to stop the default action of submitting the form (which reloads the page) */}
-                <button onSubmit={(event) => {
-                    event.preventDefault()
-                    return false
+                <button type="button" onClick={() => {
+                    if (participant != null) {
+                        // add / update the participant's songs
+                        let updatedSongs = {...SongfestStatus.songs}
+                        updatedSongs[participant] = songs
+                        SongfestStatus.setSongs(updatedSongs)
+
+                        // add the participant to the list of participants if they aren't there
+                        if (!SongfestStatus.participants.includes(participant)) {
+                            let updatedParticipants = [...SongfestStatus.participants]
+                            updatedParticipants.push(participant)
+                            SongfestStatus.setParticipants(updatedParticipants)
+                        }
+                    }
                 }}>
                     Submit
                 </button>
