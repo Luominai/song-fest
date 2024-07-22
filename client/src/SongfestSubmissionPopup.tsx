@@ -18,10 +18,8 @@ function SongfestSubmissionPopup() {
                 <Combobox value={participant} onChange={(value) => {
                     // set the participant
                     setParticipant(value)
-                    // console.log(value)
                     // if the participant is not null, try to get the array of songs they have saved. Empty if no saved songs, or no participant
                     const participantSongs = ((value != null) ? (SongfestStatus.songs[value] ?? null) : null)
-                    // console.log(participantSongs)
                     // set the songs to the particpant's songs that they've entered previously (if they exist)
                     if (participantSongs != null) {
                         setSongs(participantSongs)
@@ -57,7 +55,9 @@ function SongfestSubmissionPopup() {
                     return (
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
+                            {/* the value of the input matches the songs state */}
                             <input type="url" value={songs[index] ?? ""} id={"song" + (index + 1)}
+                            // when a change is made to the input, the songs state is updated accordingly
                             onChange={(event) => {
                                 let copy = [...songs]
                                 copy[index] = event.target.value
