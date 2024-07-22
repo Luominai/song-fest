@@ -7,7 +7,7 @@ interface SongfestStatus {
     participants: Array<string>,
     setParticipants: Function,
 
-    songs: Record<string, string>,
+    songs: Record<string, Array<string>>,
     setSongs: Function,
 
     songsPerPerson: number,

@@ -16,12 +16,27 @@ function App() {
     const [songs, setSongs] = useState({})
     const [songsPerPerson, setSongsPerPerson] = useState(1)
 
+    const sampleContextData = {
+        songfestOpen: false,
+        setSongfestOpen: setSongfestOpen,
+        participants: ["test1", "test2", "test3"],
+        setParticipants: setParticipants,
+        songs: {
+            "test1": ["rick roll"],
+            "test2": ["skskksjshf"],
+            "test3": ["suzume"]
+        },
+        setSongs: setSongs,
+        songsPerPerson: 1,
+        setSongsPerPerson: setSongsPerPerson
+    }
+
     return (
         <>
             <h1 className="text-3xl font-bold underline">
                 Hello world!
             </h1>
-            <SongfestStatusContext.Provider value={{
+            {/* <SongfestStatusContext.Provider value={{
                 songfestOpen: songfestOpen,
                 setSongfestOpen: setSongfestOpen,
                 participants: participants,
@@ -30,7 +45,8 @@ function App() {
                 setSongs: setSongs,
                 songsPerPerson: songsPerPerson,
                 setSongsPerPerson: setSongsPerPerson
-            }}>
+            }}> */}
+            <SongfestStatusContext.Provider value={sampleContextData}>
                 <SongfestCreationPopup/>
                 {songfestOpen ? <SongfestOpen/> : <SongfestClosed/>}
                 <SongfestSubmissionPopup/>

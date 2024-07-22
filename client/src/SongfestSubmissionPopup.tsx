@@ -1,23 +1,27 @@
 import { Fragment, useContext, useState } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
 
 function SongfestSubmissionPopup() {
     const SongfestStatus = useContext(SongfestStatusContext)
     const [participant, setParticipant] = useState(null)
+    const [query, setQuery] = useState("")
     const [savedSongs, setSavedSongs] = useState([])
 
     return (
         <>
             <form>
-                <label htmlFor="names">Name:</label> <br></br>
-                <input type="text" id="names" list="nameslist" required onChange={(event) => {
-                    console.log(event.target.value)
-                }}/>
-                <datalist id="nameslist">
-                    {SongfestStatus?.participants.map((participant, index) => {
-                        return <option key={index}>{participant}</option>
-                    })}
-                </datalist> 
+                <p>Name:</p>
+                <Combobox value={participant} onChange={setParticipant} onClose={() => setQuery("")} immediate>
+                    <ComboboxInput onChange={(event) => setQuery(event.target.value)} displayValue={(person: string) => person}/>
+                    <ComboboxOptions anchor="bottom start">
+                        {SongfestStatus.participants.map((person, index) => (
+                            <ComboboxOption value={person} key={index}>
+                                {person}
+                            </ComboboxOption>
+                        ))}
+                    </ComboboxOptions>
+                </Combobox>
                 <br></br>
 
                 {Array.from({length: (SongfestStatus?.songsPerPerson as number)}).map((_, index) => {
