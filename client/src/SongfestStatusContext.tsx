@@ -12,6 +12,9 @@ interface SongfestStatus {
 
     songsPerPerson: number,
     setSongsPerPerson: Function,
+
+    theme: string,
+    setTheme: Function
 }
 
 const SongfestStatusContext = createContext<SongfestStatus>({
@@ -26,6 +29,9 @@ const SongfestStatusContext = createContext<SongfestStatus>({
 
     songsPerPerson: 1,
     setSongsPerPerson: () => {},
+
+    theme: "",
+    setTheme: () => {}
 })
 
 export default SongfestStatusContext

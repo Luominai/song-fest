@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import './App.css'
 import { io } from 'socket.io-client'
 import SongfestClosed from './SongfestClosed'
@@ -15,6 +15,24 @@ function App() {
     const [participants, setParticipants] = useState([])
     const [songs, setSongs] = useState({})
     const [songsPerPerson, setSongsPerPerson] = useState(1)
+    const [theme, setTheme] = useState("")
+
+    useEffect(() => {
+        // after initial render, get the songfest status
+        socket.emit("getSongfestStatus")
+    }, [])
+
+    useEffect(() => {
+        socket.on("receiveSongfestStatus", (serverSongfestStatus) => {
+            console.log(serverSongfestStatus)
+            // update all state variables
+            setSongfestOpen(serverSongfestStatus.songfestOpen)
+            setParticipants(serverSongfestStatus.participants)
+            setSongs(serverSongfestStatus.songs)
+            setSongsPerPerson(serverSongfestStatus.songsPerPerson)
+            setTheme(serverSongfestStatus.theme)
+        })
+    }, [socket])
 
     const sampleContextData = {
         songfestOpen: false,
@@ -44,7 +62,9 @@ function App() {
                 songs: songs,
                 setSongs: setSongs,
                 songsPerPerson: songsPerPerson,
-                setSongsPerPerson: setSongsPerPerson
+                setSongsPerPerson: setSongsPerPerson,
+                theme: theme,
+                setTheme: setTheme
             }}>
             {/* <SongfestStatusContext.Provider value={sampleContextData}> */}
                 <SongfestCreationPopup/>

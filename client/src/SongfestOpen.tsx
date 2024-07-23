@@ -10,13 +10,15 @@ function SongfestOpen() {
                 <img src='https://picsum.photos/466/318' className='image'></img>
             </div>
             <div>
-                <p>Theme: Melodramatic</p>
+                <p>Theme: {SongfestStatus.theme}</p>
                 <button>
                     Submit Songs
                 </button>
             </div>
             <div>
-                <button onClick={() => SongfestStatus?.setSongfestOpen(false)}>
+                <button onClick={() => {
+                    SongfestStatus.setSongfestOpen(false)
+                }}>
                     Cancel Shitfest
                 </button>
             </div>
