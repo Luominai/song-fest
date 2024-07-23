@@ -18,24 +18,32 @@ let songfestStatus = {
 }
 
 io.on('connection', (socket) => { 
-    console.log('Connected'); 
+    console.log(socket.id); 
 
-    socket.on('test', (socket) => {
-        console.log("button clicked")
+    socket.on('updateSongfestOpen', (state) => {
+        songfestStatus["songfestOpen"] = state
+        socket.emit('updateSongfestOpen', state)
+    })
+    socket.on('updateParticipants', (state) => {
+        songfestStatus["participants"] = state
+        socket.emit('updateParticipants', state)
+    })
+    socket.on('updateSongs', (state) => {
+        songfestStatus["songs"] = state
+        socket.emit('updateSongs', state)
+    })
+    socket.on('updateSongsPerPerson', (state) => {
+        songfestStatus["songsPerPerson"] = state
+        socket.emit('updateSongsPerPerson', state)
+    })
+    socket.on('updateTheme', (state) => {
+        songfestStatus["theme"] = state
+        socket.emit('updateTheme', state)
     })
 
-    // when receiving message from client that the songfest status has changed
-    socket.on('songfestStatusChanged', (newSongfestStatus) => {
-        if (songfestStatus != newSongfestStatus) {
-            // update the server's songfest status
-            songfestStatus = newSongfestStatus
-            // send the updated status to clients
-            socket.emit('updateSongfestStatus', songfestStatus)
-        }
-    })
-
-    socket.on('getSongfestStatus', () => {
-        socket.emit('receiveSongfestStatus', songfestStatus)
+    socket.on('getSongfestStatus', (id) => {
+        console.log(`sending status to ${id}`)
+        io.to(id).emit('receiveSongfestStatus', songfestStatus)
     })
     
 })

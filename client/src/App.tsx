@@ -17,12 +17,28 @@ function App() {
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [theme, setTheme] = useState("")
 
-    useEffect(() => {
-        // after initial render, get the songfest status
-        socket.emit("getSongfestStatus")
-    }, [])
+    function emitSongfestOpen(state: boolean) {
+        socket.emit("updateSongfestOpen", state)
+    }
+    function emitParticipants(state: Array<string>) {
+        socket.emit("updateParticipants", state)
+    }
+    function emitSongs(state: Record<string,Array<string>>) {
+        socket.emit("updateSongs", state)
+    }
+    function emitSongsPerPerson(state: number) {
+        socket.emit("updateSongsPerPerson", state)
+    }
+    function emitTheme(state: string) {
+        socket.emit("updateTheme", state)
+    }
 
     useEffect(() => {
+        socket.on("connect", () => {
+            const sessionId = socket.id
+            console.log(sessionId)
+            socket.emit("getSongfestStatus", sessionId)
+        })
         socket.on("receiveSongfestStatus", (serverSongfestStatus) => {
             console.log(serverSongfestStatus)
             // update all state variables
@@ -32,22 +48,22 @@ function App() {
             setSongsPerPerson(serverSongfestStatus.songsPerPerson)
             setTheme(serverSongfestStatus.theme)
         })
+        socket.on('updateSongfestOpen', (state) => {
+            setSongfestOpen(state)
+        })
+        socket.on('updateParticipants', (state) => {
+            setParticipants(state)
+        })
+        socket.on('updateSongs', (state) => {
+            setSongs(state)
+        })
+        socket.on('updateSongsPerPerson', (state) => {
+            setSongsPerPerson(state)
+        })
+        socket.on('updateTheme', (state) => {
+            setTheme(state)
+        })
     }, [socket])
-
-    const sampleContextData = {
-        songfestOpen: false,
-        setSongfestOpen: setSongfestOpen,
-        participants: ["test1", "test2", "test3"],
-        setParticipants: setParticipants,
-        songs: {
-            "test1": ["rick roll"],
-            "test2": ["skskksjshf"],
-            "test3": ["suzume"]
-        },
-        setSongs: setSongs,
-        songsPerPerson: 2,
-        setSongsPerPerson: setSongsPerPerson
-    }
 
     return (
         <>
@@ -56,15 +72,15 @@ function App() {
             </h1>
             <SongfestStatusContext.Provider value={{
                 songfestOpen: songfestOpen,
-                setSongfestOpen: setSongfestOpen,
+                setSongfestOpen: emitSongfestOpen,
                 participants: participants,
-                setParticipants: setParticipants,
+                setParticipants: emitParticipants,
                 songs: songs,
-                setSongs: setSongs,
+                setSongs: emitSongs,
                 songsPerPerson: songsPerPerson,
-                setSongsPerPerson: setSongsPerPerson,
+                setSongsPerPerson: emitSongsPerPerson,
                 theme: theme,
-                setTheme: setTheme
+                setTheme: emitTheme
             }}>
             {/* <SongfestStatusContext.Provider value={sampleContextData}> */}
                 <SongfestCreationPopup/>
