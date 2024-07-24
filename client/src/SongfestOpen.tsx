@@ -17,6 +17,13 @@ function SongfestOpen() {
             </div>
             <div>
                 <button onClick={() => {
+                    SongfestStatus.setGameStart(true)
+                }}>
+                    Start Shitfest
+                </button>
+            </div>
+            <div>
+                <button onClick={() => {
                     SongfestStatus.setSongfestOpen(false)
                 }}>
                     Cancel Shitfest

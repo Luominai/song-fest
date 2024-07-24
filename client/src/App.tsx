@@ -1,11 +1,9 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { io } from 'socket.io-client'
-import SongfestClosed from './SongfestClosed'
-import SongfestOpen from './SongfestOpen'
 import SongfestStatusContext from './SongfestStatusContext'
-import SongfestCreationPopup from './SongfestCreationPopup'
-import SongfestSubmissionPopup from './SongfestSubmissionPopup'
+import SongfestHome from './SongfestHome'
+import SongfestGame from './SongfestGame'
 
 // connect to socket server
 const socket = io()
@@ -16,6 +14,7 @@ function App() {
     const [songs, setSongs] = useState({})
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [theme, setTheme] = useState("")
+    const [gameStart, setGameStart] = useState(false)
 
     function emitSongfestOpen(state: boolean) {
         socket.emit("updateSongfestOpen", state)
@@ -31,6 +30,9 @@ function App() {
     }
     function emitTheme(state: string) {
         socket.emit("updateTheme", state)
+    }
+    function emitGameStart(state: boolean) {
+        socket.emit("updateGameStart", state)
     }
 
     useEffect(() => {
@@ -63,6 +65,9 @@ function App() {
         socket.on('updateTheme', (state) => {
             setTheme(state)
         })
+        socket.on('updateGameStart', (state) => {
+            setGameStart(state)
+        })
     }, [socket])
 
     return (
@@ -80,12 +85,11 @@ function App() {
                 songsPerPerson: songsPerPerson,
                 setSongsPerPerson: emitSongsPerPerson,
                 theme: theme,
-                setTheme: emitTheme
+                setTheme: emitTheme,
+                gameStart: gameStart,
+                setGameStart: emitGameStart
             }}>
-            {/* <SongfestStatusContext.Provider value={sampleContextData}> */}
-                <SongfestCreationPopup/>
-                {songfestOpen ? <SongfestOpen/> : <SongfestClosed/>}
-                <SongfestSubmissionPopup/>
+                {gameStart ? <SongfestGame/> : <SongfestHome/>}
             </SongfestStatusContext.Provider>
         </>
     )

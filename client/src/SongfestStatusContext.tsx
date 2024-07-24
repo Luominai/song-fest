@@ -14,7 +14,10 @@ interface SongfestStatus {
     setSongsPerPerson: Function,
 
     theme: string,
-    setTheme: Function
+    setTheme: Function,
+
+    gameStart: boolean,
+    setGameStart: Function
 }
 
 const SongfestStatusContext = createContext<SongfestStatus>({
@@ -31,7 +34,10 @@ const SongfestStatusContext = createContext<SongfestStatus>({
     setSongsPerPerson: () => {},
 
     theme: "",
-    setTheme: () => {}
+    setTheme: () => {},
+
+    gameStart: false,
+    setGameStart: () => {}
 })
 
 export default SongfestStatusContext
