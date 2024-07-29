@@ -100,6 +100,48 @@ let gameState = {
                                 // }
 }
 
+async function getSongData(song) {
+    // get the clip id from the url
+    const clipId = song.substring(song.indexOf("clip/") + "clip/".length, song.indexOf("?si"))
+
+    // make requests to Youtube Operational API to get the video Id and start/end times
+    const response = await axios.all([
+        axios.get(youtubeAPI, {
+            params: {
+                part: "id",
+                clipId: clipId
+            }
+        }),
+        axios.get(youtubeAPI, {
+            params: {
+                part: "clip",
+                clipId: clipId
+            }
+        }),
+    ])
+    
+    // get data
+    const idData = response[0].data
+    const clipData = response[1].data
+
+    console.log("================== idData ==================")
+    console.log(idData)
+    console.log("================== clipData ==================")
+    console.log(clipData)
+
+    // get specific parts of data
+    const startSeconds = clipData["items"][0]["clip"]["startTimeMs"] / 1000
+    const endSeconds = clipData["items"][0]["clip"]["endTimeMs"] / 1000
+    const videoId = idData["items"][0]["videoId"]
+
+    return {
+        "videoId": videoId,
+        "startSeconds": startSeconds,
+        "endSeconds": endSeconds,
+        "clipId": clipId,
+    }
+}
+
 io.on('connection', (socket) => { 
     console.log(socket.id); 
 
@@ -150,51 +192,14 @@ io.on('connection', (socket) => {
 
             // get the songs they submitted
             for (const song of songs) {
-                // get the clip id from the url
-                const clipId = song.substring(song.indexOf("clip/") + "clip/".length, song.indexOf("?si"))
-
-                // make requests to Youtube Operational API to get the video Id and start/end times
-                const response = await axios.all([
-                    axios.get(youtubeAPI, {
-                        params: {
-                            part: "id",
-                            clipId: clipId
-                        }
-                    }),
-                    axios.get(youtubeAPI, {
-                        params: {
-                            part: "clip",
-                            clipId: clipId
-                        }
-                    }),
-                ])
-                
-                // get data
-                const idData = response[0].data
-                const clipData = response[1].data
-
-                console.log("================== idData ==================")
-                console.log(idData)
-                console.log("================== clipData ==================")
-                console.log(clipData)
-
-                // get specific parts of data
-                const startSeconds = clipData["items"][0]["clip"]["startTimeMs"] / 1000
-                const endSeconds = clipData["items"][0]["clip"]["endTimeMs"] / 1000
-                const videoId = idData["items"][0]["videoId"]
-
-                // push the data to embedData
-                embedData.push({
-                    "videoId": videoId,
-                    "startSeconds": startSeconds,
-                    "endSeconds": endSeconds,
-                    "clipId": clipId,
-                    "submitter": player
-                })
+                // get song data for each song
+                let songData = await getSongData(song)
+                songData["submitter"] = player
+                embedData.push(songData)
 
                 // add an entry to songScores for the song
-                gameState.songScores[clipId] = {
-                    "videoId": videoId,
+                gameState.songScores[songData.clipId] = {
+                    "videoId": songData.videoId,
                     "themeScore": 0,
                     "likedScore": 0,
                     "submitter": player
