@@ -1,5 +1,6 @@
 import { useContext } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
+import ShitfestLogo from "./assets/SongShitfestLogo.png"
 
 function SongfestOpen() {
     const SongfestStatus = useContext(SongfestStatusContext)
@@ -7,7 +8,7 @@ function SongfestOpen() {
     return (
         <>
             <div>
-                <img src='https://picsum.photos/466/318' className='image'></img>
+                <img src={ShitfestLogo} className='logo'></img>
             </div>
             <div>
                 <p>Theme: {SongfestStatus.theme}</p>

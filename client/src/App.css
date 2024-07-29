@@ -6,13 +6,19 @@
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 75%;
+  width: 75%;
+  padding: auto;
+  margin: auto;
   will-change: filter;
   transition: filter 300ms;
 }
+@keyframes bounce2 {
+	0%, 100% {transform: translateY(0);}
+	50% {transform: translateY(-20px);}
+}
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  animation: bounce2 1.5s ease-in-out infinite;
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
