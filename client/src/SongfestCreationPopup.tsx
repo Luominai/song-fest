@@ -5,6 +5,7 @@ function SongfestCreationPopup() {
     const SongfestStatus = useContext(SongfestStatusContext)
     const [theme, setTheme] = useState("")
     const [songsPerPerson, setSongsPerPerson] = useState(1)
+    const [host, setHost] = useState("")
 
     return (
         <>
@@ -16,6 +17,12 @@ function SongfestCreationPopup() {
                 }}
                 /> <br></br>
 
+                <label htmlFor="host">Host:</label> <br></br>
+                <input type="text" id="host" required
+                onChange={(event) => {
+                    setHost(event.target.value)
+                }}/><br></br> 
+
                 <label htmlFor="songs per person">Songs per person:</label> <br></br>
                 <input type="number" id="songs per person" required
                 onChange={(event) => {
@@ -25,9 +32,16 @@ function SongfestCreationPopup() {
 
                 <button type="button" onClick={(event) => {
                     event.preventDefault()
+                    // open the songfest and update corresponding variables
                     SongfestStatus.setSongfestOpen(true)
                     SongfestStatus.setSongsPerPerson(songsPerPerson)
                     SongfestStatus.setTheme(theme)
+                    SongfestStatus.setHost(host)
+
+                    // add host to list of participants
+                    const copy = [...SongfestStatus.participants]
+                    copy.push(host)
+                    SongfestStatus.setParticipants(copy)
                     return false
                 }}>
                     Submit

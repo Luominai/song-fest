@@ -1,12 +1,16 @@
 const express = require("express")
 const {Server} = require("socket.io")
 const http = require("http")
+const axios = require("axios")
 
 // setup server
 const app = express()
 app.use(express.static(__dirname + "/dist"));
 const server = http.createServer(app)
 const io = new Server(server)
+
+// youtube api
+const youtubeAPI = "https://yt.lemnoslife.com/videos"
 
 // how to account for duplicate songs?
 //  - if we prevent people from submitting dupes, then it might narrow down that person's search pool when the song appears
@@ -31,6 +35,7 @@ let songfestStatus = {
     "songsPerPerson": 1,
     "theme": "",
     "gameStart": false,
+    "host": ""                  // name of host
 }
 
 // variables relating to the game state
@@ -123,10 +128,87 @@ io.on('connection', (socket) => {
         songfestStatus["gameStart"] = state
         socket.emit('updateGameStart', state)
     })
+    socket.on("updateHost", (state) => {
+        songfestStatus["host"] = state
+        socket.emit('updateHost', state)
+    })
 
     socket.on('getSongfestStatus', (id) => {
         console.log(`sending status to ${id}`)
         io.to(id).emit('receiveSongfestStatus', songfestStatus)
+    })
+    socket.on("startGame", async () => {
+        const embedData = []
+
+        // for each player
+        for (const [player, songs] of Object.entries(songfestStatus.songs)) {
+            // add an entry to playerScores for the player
+            gameState.playerScores[player] = {
+                "themeScore": 0,
+                "likedScore": 0
+            }
+
+            // get the songs they submitted
+            for (const song of songs) {
+                // get the clip id from the url
+                const clipId = song.substring(song.indexOf("clip/") + "clip/".length, song.indexOf("?si"))
+
+                // make requests to Youtube Operational API to get the video Id and start/end times
+                const response = await axios.all([
+                    axios.get(youtubeAPI, {
+                        params: {
+                            part: "id",
+                            clipId: clipId
+                        }
+                    }),
+                    axios.get(youtubeAPI, {
+                        params: {
+                            part: "clip",
+                            clipId: clipId
+                        }
+                    }),
+                ])
+                
+                // get data
+                const idData = response[0].data
+                const clipData = response[1].data
+
+                console.log("================== idData ==================")
+                console.log(idData)
+                console.log("================== clipData ==================")
+                console.log(clipData)
+
+                // get specific parts of data
+                const startSeconds = clipData["items"][0]["clip"]["startTimeMs"] / 1000
+                const endSeconds = clipData["items"][0]["clip"]["endTimeMs"] / 1000
+                const videoId = idData["items"][0]["videoId"]
+
+                // push the data to embedData
+                embedData.push({
+                    "videoId": videoId,
+                    "startSeconds": startSeconds,
+                    "endSeconds": endSeconds,
+                    "clipId": clipId,
+                    "submitter": player
+                })
+
+                // add an entry to songScores for the song
+                gameState.songScores[clipId] = {
+                    "videoId": videoId,
+                    "themeScore": 0,
+                    "likedScore": 0,
+                    "submitter": player
+                }
+            }
+        }
+        // update embedData
+        gameState["songEmbedData"] = embedData
+        console.log("================== songEmbedData ==================")
+        console.log(embedData)
+
+        // update gameStart
+
+        // emit update gameStart 
     })
     
 })

@@ -18,6 +18,7 @@ function SongfestOpen() {
             <div>
                 <button onClick={() => {
                     SongfestStatus.setGameStart(true)
+                    SongfestStatus.startGame()
                 }}>
                     Start Shitfest
                 </button>

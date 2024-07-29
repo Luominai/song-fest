@@ -15,6 +15,7 @@ function App() {
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [theme, setTheme] = useState("")
     const [gameStart, setGameStart] = useState(false)
+    const [host, setHost] = useState("")
 
     function emitSongfestOpen(state: boolean) {
         socket.emit("updateSongfestOpen", state)
@@ -33,6 +34,13 @@ function App() {
     }
     function emitGameStart(state: boolean) {
         socket.emit("updateGameStart", state)
+    }
+    function emitHost(state: string) {
+        socket.emit("updateHost", state)
+    }
+
+    function startGame() {
+        socket.emit("startGame")
     }
 
     useEffect(() => {
@@ -68,6 +76,9 @@ function App() {
         socket.on('updateGameStart', (state) => {
             setGameStart(state)
         })
+        socket.on('updateHost', (state) => {
+            setHost(state)
+        })
     }, [socket])
 
     return (
@@ -87,7 +98,11 @@ function App() {
                 theme: theme,
                 setTheme: emitTheme,
                 gameStart: gameStart,
-                setGameStart: emitGameStart
+                setGameStart: emitGameStart,
+                host: host,
+                setHost: emitHost,
+
+                startGame: startGame
             }}>
                 {gameStart ? <SongfestGame/> : <SongfestHome/>}
             </SongfestStatusContext.Provider>
