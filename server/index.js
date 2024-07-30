@@ -102,7 +102,7 @@ let gameState = {
 
 async function getSongData(song) {
     // get the clip id from the url
-    const clipId = song.substring(song.indexOf("clip/") + "clip/".length, song.indexOf("?si"))
+    const clipId = song.substring(song.indexOf("clip/") + "clip/".length, (song.indexOf("?si") > -1) ? song.indexOf("?si") : song.length)
 
     // make requests to Youtube Operational API to get the video Id and start/end times
     const response = await axios.all([
