@@ -48,11 +48,11 @@
 }
 
 .popup {
-  background-color: #69c1ea;
+  background-color: #F1EDFF;
   border-width: 3px;
-  border-color: #81e387;
   border-style: solid;
   margin: auto;
   padding: 20px;
   width: fit-content;
+  border-radius: 40px;
 }

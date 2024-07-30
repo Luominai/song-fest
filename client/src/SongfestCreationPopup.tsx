@@ -10,27 +10,27 @@ function SongfestCreationPopup() {
     return (
         <>
             <form className='popup'>
-                <label htmlFor="theme">Theme:</label> <br></br>
+                <label htmlFor="theme">Theme: </label>
                 <input type="text" id="theme" required
                 onChange={(event) => {
                     setTheme(event.target.value)
                 }}
-                /> <br></br>
+                /> <br></br> <br></br>
 
-                <label htmlFor="host">Host:</label> <br></br>
+                <label htmlFor="host">Host: </label>
                 <input type="text" id="host" required
                 onChange={(event) => {
                     setHost(event.target.value)
-                }}/><br></br> 
+                }}/><br></br> <br></br>
 
-                <label htmlFor="songs per person">Songs per person:</label> <br></br>
+                <label htmlFor="songs per person">Songs per person: </label>
                 <input type="number" id="songs per person" required
                 onChange={(event) => {
                     setSongsPerPerson(parseInt(event.target.value))
                 }}
-                /> <br></br>
+                /> <br></br> <br></br>
 
-                <button type="button" onClick={(event) => {
+                <button type="button" className='button' onClick={(event) => {
                     event.preventDefault()
                     // open the songfest and update corresponding variables
                     SongfestStatus.setSongfestOpen(true)
