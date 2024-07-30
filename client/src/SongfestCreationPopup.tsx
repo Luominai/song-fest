@@ -9,7 +9,7 @@ function SongfestCreationPopup() {
 
     return (
         <>
-            <form>
+            <form className='popup'>
                 <label htmlFor="theme">Theme:</label> <br></br>
                 <input type="text" id="theme" required
                 onChange={(event) => {
