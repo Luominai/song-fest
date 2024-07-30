@@ -1,5 +1,6 @@
 import { useState } from "react"
-import ReactPlayer from "react-player/youtube"
+import YouTube from "react-youtube"
+import "./game.css"
 
 interface Song {
     "videoId": string,
@@ -9,8 +10,16 @@ interface Song {
     "submitter": string
 }
 
+const defaultSong = {
+    "videoId": "A8DI6DF4r3Q",
+    "startSeconds": 50,
+    "endSeconds": 70,
+    "clipId": "N/A",
+    "submitter": "test"
+}
+
 function SongfestGame() {
-    const [currentSong, setCurrentSong] = useState<Song | null>()
+    const [currentSong, setCurrentSong] = useState<Song | null>(defaultSong)
 
     return (
         <>
@@ -18,8 +27,24 @@ function SongfestGame() {
                 this is the game screen
             </div>
 
-            <ReactPlayer url='https://www.youtube.com/watch?v=LXb3EKWsInQ'/>
-            
+            {(currentSong != null) 
+            ? 
+            <YouTube
+            className={"youtube"}
+            videoId={currentSong.videoId}
+            opts={{
+                playerVars: {
+                    start: currentSong.startSeconds,
+                    end: currentSong.endSeconds,
+                    autoplay: 1,
+                }
+            }}
+            />
+            :
+            <div>
+                placeholder
+            </div>
+            }
         </>
     )
 }
