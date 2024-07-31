@@ -12,6 +12,7 @@
   margin: auto;
   will-change: filter;
   transition: filter 300ms;
+  animation: bounce2 1.5s ease-in-out infinite;
 }
 @keyframes bounce2 {
 	0%, 100% {transform: translateY(0);}
@@ -63,7 +64,7 @@
   border-width: 3px;
   border-style: solid;
   padding: 20px;
-  width: max-content;
+  width: fit-content;
   border-radius: 40px;
   justify-content: space-evenly;
   box-shadow: #64646f4d 0 7px 29px;

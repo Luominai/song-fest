@@ -2,7 +2,7 @@ import { Fragment, useContext, useState } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
 
-function SongfestSubmissionPopup() {
+function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const SongfestStatus = useContext(SongfestStatusContext)
     const [participant, setParticipant] = useState<string | null>(null)
     const [query, setQuery] = useState<string>("")
@@ -10,10 +10,15 @@ function SongfestSubmissionPopup() {
 
     return (
         <>
-            <form>
+            <form className='popup'>
                 {/* info about the combobox here: https://headlessui.com/react/combobox */}
                 {/* the combobox is connected to the participant state variable and updates it when an option is selected */}
                 {/* the combobox also sets the query to "" when closing the box (clears the text)*/}
+                
+                {/* The X button on the popup */}
+                <button style={{float: 'right'}} onClick={onClose}>&times;</button>
+                <br></br> <br></br>
+
                 <p>Name:</p>
                 <Combobox value={participant} onChange={(value) => {
                     // set the participant
@@ -48,7 +53,7 @@ function SongfestSubmissionPopup() {
                         ))}
                     </ComboboxOptions>
                 </Combobox>
-                <br></br>
+                <br></br> <br></br>
 
                 {/* create inputs for song urls. the number of inputs is determined by SongfestStatus.songsPerPerson */}
                 {Array.from({length: SongfestStatus.songsPerPerson}).map((_, index) => {
@@ -68,7 +73,9 @@ function SongfestSubmissionPopup() {
                         </div>
                     )
                 })}
+                <br></br>
 
+                <center>
                 <button type="button" onClick={() => {
                     if (participant != null) {
                         // add / update the participant's songs
@@ -86,6 +93,7 @@ function SongfestSubmissionPopup() {
                 }}>
                     Submit
                 </button>
+                </center>
             </form>
         </>
     )
