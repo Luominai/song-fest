@@ -47,12 +47,30 @@
   color: #888;
 }
 
+@keyframes fadeInUp {
+  from {
+      opacity: 0;
+      transform: translate(-50%, 20px);   
+  }
+  to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+  }
+}
+
 .popup {
-  background-color: #F1EDFF;
+  background-color: #f1edff;
   border-width: 3px;
   border-style: solid;
-  margin: auto;
   padding: 20px;
   width: fit-content;
   border-radius: 40px;
+  justify-content: space-evenly;
+  box-shadow: #64646f4d 0 7px 29px;
+  position: fixed;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%);
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
 }

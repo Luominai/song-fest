@@ -1,7 +1,8 @@
 import { useContext, useState } from "react"
+import { createPortal } from "react-dom"
 import SongfestStatusContext from "./SongfestStatusContext"
 
-function SongfestCreationPopup() {
+function SongfestCreationPopup( {onClose}: {onClose: any} ) {
     const SongfestStatus = useContext(SongfestStatusContext)
     const [theme, setTheme] = useState("")
     const [songsPerPerson, setSongsPerPerson] = useState(1)
@@ -10,6 +11,10 @@ function SongfestCreationPopup() {
     return (
         <>
             <form className='popup'>
+                {/* The X button on the popup */}
+                <button onClick={onClose}>&times;</button>
+                <br></br> <br></br>
+                
                 <label htmlFor="theme">Theme: </label>
                 <input type="text" id="theme" required
                 onChange={(event) => {
@@ -30,6 +35,7 @@ function SongfestCreationPopup() {
                 }}
                 /> <br></br> <br></br>
 
+                <center>
                 <button type="button" className='button' onClick={(event) => {
                     event.preventDefault()
                     // open the songfest and update corresponding variables
@@ -46,6 +52,7 @@ function SongfestCreationPopup() {
                 }}>
                     Submit
                 </button>
+                </center>
             </form>
         </>
     )
