@@ -12,7 +12,7 @@ function SongfestCreationPopup( {onClose}: {onClose: any} ) {
         <>
             <form className='popup'>
                 {/* The X button on the popup */}
-                <button onClick={onClose}>&times;</button>
+                <button style={{float: 'right'}} onClick={onClose}>&times;</button>
                 <br></br> <br></br>
                 
                 <label htmlFor="theme">Theme: </label>

@@ -63,7 +63,7 @@
   border-width: 3px;
   border-style: solid;
   padding: 20px;
-  width: fit-content;
+  width: max-content;
   border-radius: 40px;
   justify-content: space-evenly;
   box-shadow: #64646f4d 0 7px 29px;
