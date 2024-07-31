@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
 import SongfestCreationPopup from "./SongfestCreationPopup"
 import SongfestSubmissionPopup from "./SongfestSubmissionPopup"
@@ -10,8 +10,7 @@ function SongfestHome() {
 
     return (
         <>
-            <SongfestCreationPopup/>
-                {SongfestStatus.songfestOpen ? <SongfestOpen/> : <SongfestClosed/>}
+            <SongfestClosed/>
             <SongfestSubmissionPopup/>
         </>
     )
