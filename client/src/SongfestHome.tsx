@@ -10,8 +10,7 @@ function SongfestHome() {
 
     return (
         <>
-            <SongfestClosed/>
-            <SongfestSubmissionPopup/>
+            {SongfestStatus.songfestOpen ? <SongfestOpen /> : <SongfestClosed />}
         </>
     )
 }

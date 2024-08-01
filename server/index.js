@@ -21,7 +21,7 @@ const youtubeAPI = "https://yt.lemnoslife.com/videos"
 
 // store variables relating to songfest
 let songfestStatus = {
-    "songfestOpen": true,
+    "songfestOpen": false,
     "participants": [],         // array of participants
                                 // ["kevin", "better kevin"]
 
