@@ -147,36 +147,43 @@ io.on('connection', (socket) => {
 
     // ======================== songfest status sockets ========================
     socket.on('updateSongfestOpen', (state) => {
+        console.log(`updating SongfestOpen to ${state} \n`)
         songfestStatus["songfestOpen"] = state
         socket.emit('updateSongfestOpen', state)
     })
     socket.on('updateParticipants', (state) => {
+        console.log(`updating Participants to [${state}]\n`)
         songfestStatus["participants"] = state
         socket.emit('updateParticipants', state)
     })
     socket.on('updateSongs', (state) => {
+        console.log(`updating Songs to ${JSON.stringify(state)}\n`)
         songfestStatus["songs"] = state
         socket.emit('updateSongs', state)
     })
     socket.on('updateSongsPerPerson', (state) => {
+        console.log(`updating SongsPerPerson to ${state}\n`)
         songfestStatus["songsPerPerson"] = state
         socket.emit('updateSongsPerPerson', state)
     })
     socket.on('updateTheme', (state) => {
+        console.log(`updating Theme to ${state}\n`)
         songfestStatus["theme"] = state
         socket.emit('updateTheme', state)
     })
     socket.on("updateGameStart", (state) => {
+        console.log(`updating GameStart to ${state}\n`)
         songfestStatus["gameStart"] = state
         socket.emit('updateGameStart', state)
     })
     socket.on("updateHost", (state) => {
+        console.log(`updating Host to ${state}\n`)
         songfestStatus["host"] = state
         socket.emit('updateHost', state)
     })
 
     socket.on('getSongfestStatus', (id) => {
-        console.log(`sending status to ${id}`)
+        console.log(`sending SongfestStatus to ${id}\n`)
         io.to(id).emit('receiveSongfestStatus', songfestStatus)
     })
     socket.on("startGame", async () => {
