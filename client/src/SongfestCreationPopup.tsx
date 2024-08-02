@@ -1,3 +1,8 @@
+/**
+ * This renders a form containing information about the Songfest's theme, host, and songs per person
+ * On submit, this updates the corresponding variables in Songfest.tsx as well as serverside in index.js 
+ */
+
 import { useContext, useState } from "react"
 import { createPortal } from "react-dom"
 import SongfestStatusContext from "./SongfestStatusContext"

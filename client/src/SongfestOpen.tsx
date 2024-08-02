@@ -1,3 +1,8 @@
+/**
+ * This component is rendered when there is a songfest active but the game has not started.
+ * It renders buttons for submitting songs, starting the game, and canceling the songfest
+ */
+
 import { useContext, useState } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
 import ShitfestLogo from "./assets/SongShitfestLogo.png"

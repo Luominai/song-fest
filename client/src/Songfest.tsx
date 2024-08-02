@@ -1,3 +1,13 @@
+/**
+ * This is the top-level for all Songfest components.
+ * Contains all the state variables for the Home Menu.
+ * Shares all state variables and their setters to all Songfest components using SongfestStatusContext.tsx
+ * Handles sockets relating to the Home Menu.
+ * 
+ * @param socket        A socket connection passed in from App.tsx to ensure the same socket connection is used throughout the project
+ * @param startGame     A function passed in from App.tsx that starts the game when called. Ex: startGame()   
+ */
+
 import { useContext, useState, useEffect } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
 import SongfestOpen from "./SongfestOpen"

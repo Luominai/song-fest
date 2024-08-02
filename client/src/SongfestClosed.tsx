@@ -1,3 +1,9 @@
+/**
+ * This component is rendered when there is no songfest active.
+ * It just renders the logo and and a button for the user to start a Songfest.
+ * Renders SongfestCreationPopup.tsx when the button is pressed
+ */
+
 import { useContext, useState } from "react"
 import { createPortal } from 'react-dom';
 import SongfestStatusContext from "./SongfestStatusContext"

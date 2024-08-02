@@ -1,3 +1,7 @@
+/**
+ * This file contains functions for responding to Songfest-related messages from the server.
+ */
+
 import { Socket } from "socket.io-client"
 
 export default function useSongfestReceivers(socket: Socket, songfestSetters: any) {

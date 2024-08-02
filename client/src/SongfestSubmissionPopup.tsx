@@ -1,3 +1,8 @@
+/**
+ * This renders a form containing information about the player's name, and the songs they want to submit.
+ * On submit, this updates the corresponding variables in Songfest.tsx as well as serverside in index.js 
+ */
+
 import { Fragment, useContext, useState } from "react"
 import SongfestStatusContext from "./SongfestStatusContext"
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"

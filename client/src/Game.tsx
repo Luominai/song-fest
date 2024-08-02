@@ -1,3 +1,12 @@
+/**
+ * This is the top-level for all Game components.
+ * Contains all the state variables for the Game.
+ * Shares all state variables and their setters to all Game components using GameContext.tsx
+ * Handles sockets relating to the Game.
+ * 
+ * @param socket        A socket connection passed in from App.tsx to ensure the same socket connection is used throughout the project
+ */
+
 import { useState } from "react"
 import "./css/game.css"
 import GameRating from "./GameRating"
@@ -6,8 +15,9 @@ import GameGuessing from "./GameGuessing"
 import GameGuessingReview from "./GameGuessingReview"
 import Song from "./types/Song"
 import GameContext from "./GameContext"
+import { Socket } from "socket.io-client"
 
-function Game() {
+function Game({socket}: {socket: Socket}) {
     const [currentSong, setCurrentSong] = useState<Song | null>(null)
     const [phase, setPhase] = useState<number>(0)
 
