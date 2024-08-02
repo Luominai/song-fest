@@ -82,3 +82,25 @@ input {
     color: #747bff;
   }
 }
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #676BC9;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #A6B5EA;
+    border-radius: 100vh;
+    border: 3px solid #676BC9;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #A6B5EA;
+  }
+}
