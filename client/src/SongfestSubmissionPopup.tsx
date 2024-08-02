@@ -29,10 +29,10 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                     if (participantSongs != null) {
                         setSongs(participantSongs)
                     }
-                }} onClose={() => setQuery("")}>
+                }} onClose={() => setQuery("")} immediate>
                     {/* the query state variable updates to match what the user types */}
                     <ComboboxInput onChange={(event) => setQuery(event.target.value)} displayValue={(person: string) => person}/>
-                    <ComboboxOptions anchor="bottom start" className="border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible">
+                    <ComboboxOptions anchor="bottom start" className=" group border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible [--anchor-max-height:80px]">
                         {/* dynamically create an option based off what the user is typing. */}
                         {/* this option will show if the query is not whitespace and if the query does not match an existing participant*/}
                         {query.trim().length > 0 && !SongfestStatus.participants.includes(query) && (
@@ -47,7 +47,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                         })
                         // for every participant remaining, create an option for them in the combobox
                         .map((person, index) => (
-                            <ComboboxOption value={person} key={index} className="bg-[#A6B5EA]">
+                            <ComboboxOption value={person} key={index} className="bg-[#A6B5EA] hover:bg-[#6f71b2] hover:text-white">
                                 {person}
                             </ComboboxOption>
                         ))}
