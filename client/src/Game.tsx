@@ -1,7 +1,10 @@
 import { useState } from "react"
-import "./game.css"
-import GameRatingPhase from "./GameRatingPhase"
-import Song from "./Song"
+import "./css/game.css"
+import GameRating from "./GameRating"
+import GameRatingReview from "./GameRatingReview"
+import GameGuessing from "./GameGuessing"
+import GameGuessingReview from "./GameGuessingReview"
+import Song from "./types/Song"
 import GameContext from "./GameContext"
 
 function Game() {
@@ -9,17 +12,17 @@ function Game() {
     const [phase, setPhase] = useState<number>(0)
 
     if (phase == 0) {
-        return <GameRatingPhase/>
+        return <GameRating/>
     }
-    // else if (phase == 1) {
-    //     return <GameRatingReviewPhase/>
-    // }
-    // else if (phase == 2) {
-    //     return <GameGuessingPhase/>
-    // }
-    // else if (phase == 3) {
-    //     return <GameGuessingReviewPhase/>
-    // }
+    else if (phase == 1) {
+        return <GameRatingReview/>
+    }
+    else if (phase == 2) {
+        return <GameGuessing/>
+    }
+    else if (phase == 3) {
+        return <GameGuessingReview/>
+    }
 }
 
 export default Game

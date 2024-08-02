@@ -34,7 +34,6 @@ let songfestStatus = {
                                 // }
     "songsPerPerson": 1,
     "theme": "",
-    "gameStart": false,
     "host": ""                  // name of host
 }
 
@@ -170,11 +169,6 @@ io.on('connection', (socket) => {
         console.log(`updating Theme to ${state}\n`)
         songfestStatus["theme"] = state
         socket.emit('updateTheme', state)
-    })
-    socket.on("updateGameStart", (state) => {
-        console.log(`updating GameStart to ${state}\n`)
-        songfestStatus["gameStart"] = state
-        socket.emit('updateGameStart', state)
     })
     socket.on("updateHost", (state) => {
         console.log(`updating Host to ${state}\n`)

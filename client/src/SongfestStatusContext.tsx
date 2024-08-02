@@ -16,9 +16,6 @@ interface SongfestStatus {
     theme: string,
     setTheme: Function,
 
-    gameStart: boolean,
-    setGameStart: Function,
-
     host: string,
     setHost: Function,
 
@@ -40,9 +37,6 @@ const SongfestStatusContext = createContext<SongfestStatus>({
 
     theme: "",
     setTheme: () => {},
-
-    gameStart: false,
-    setGameStart: () => {},
 
     host: "",
     setHost: () => {},
