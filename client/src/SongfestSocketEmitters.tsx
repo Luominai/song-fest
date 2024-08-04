@@ -33,6 +33,10 @@ export default function getSongfestEmitters(socket: Socket) {
         "startGame":() => {
             console.log(`asking server to start the game`)
             socket.emit("startGame")
+        },
+        "getSongfestStatus":() => {
+            console.log('asking server for songfest status')
+            socket.emit("getSongfestStatus", socket.id)
         }
     }
 }

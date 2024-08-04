@@ -3,7 +3,7 @@
  * Contains a socket connection that is passed to Game.tsx and Songfest.tsx
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './css/App.css'
 import Game from './Game'
 import { io } from 'socket.io-client'
@@ -13,14 +13,28 @@ import Songfest from './Songfest'
 const socket = io()
 
 function App() {
+    const [socketConnected, setSocketConnected] = useState(false)
     const [gameStart, setGameStart] = useState(false)
 
-    if (gameStart) {
-        return <Game socket={socket}/>
+    useEffect(() => {
+        socket.on("connect", () => {
+            setSocketConnected(true)
+        })
+    },[])
+
+    if (socketConnected) {
+        if (gameStart) {
+            return <Game socket={socket}/>
+        }
+        else {
+            return <Songfest socket={socket} startGame={() => setGameStart(true)}/>
+        }
     }
-    else {
-        return <Songfest socket={socket} startGame={() => setGameStart(true)}/>
-    }
+    else return (
+        <div>
+            loading...
+        </div>
+    )
 }
 
 export default App
