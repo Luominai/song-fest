@@ -38,10 +38,11 @@ function Songfest({socket, startGame}: {socket: Socket, startGame: Function}) {
             "setSongs":setSongs, 
             "setSongsPerPerson":setSongsPerPerson, 
             "setTheme":setTheme, 
-            "setHost":setHost
+            "setHost":setHost,
+
+            "startGame": startGame
         })
         if (!songfestStatusReceived.current) {
-            console.log(socket.id)
             songfestEmitters.getSongfestStatus()
             songfestStatusReceived.current = true
         }
@@ -63,7 +64,8 @@ function Songfest({socket, startGame}: {socket: Socket, startGame: Function}) {
                 host: host,
                 setHost: songfestEmitters.emitHost,
 
-                startGame: startGame
+                // startGame: startGame
+                startGame: songfestEmitters.startGame
             }}>
                 {songfestOpen ? <SongfestOpen/> : <SongfestClosed />}
             </SongfestStatusContext.Provider>

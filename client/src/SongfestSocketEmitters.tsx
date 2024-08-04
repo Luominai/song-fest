@@ -36,7 +36,7 @@ export default function getSongfestEmitters(socket: Socket) {
         },
         "getSongfestStatus":() => {
             console.log('asking server for songfest status')
-            socket.emit("getSongfestStatus", socket.id)
+            socket.emit("getSongfestStatus")
         }
     }
 }

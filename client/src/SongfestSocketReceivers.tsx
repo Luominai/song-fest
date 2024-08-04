@@ -5,7 +5,7 @@
 import { Socket } from "socket.io-client"
 
 export default function useSongfestReceivers(socket: Socket, songfestSetters: any) {
-    const {setSongfestOpen, setParticipants, setSongs, setSongsPerPerson, setTheme, setHost} = songfestSetters
+    const {setSongfestOpen, setParticipants, setSongs, setSongsPerPerson, setTheme, setHost, startGame} = songfestSetters
 
     socket.on("receiveSongfestStatus", (serverSongfestStatus) => {
         console.log(serverSongfestStatus)
@@ -39,5 +39,10 @@ export default function useSongfestReceivers(socket: Socket, songfestSetters: an
     socket.on('updateHost', (state) => {
         console.log(`server requesting to update Host to ${state}`)
         setHost(state)
+    })
+
+    socket.on('startGame', () => {
+        console.log(`starting game`)
+        startGame()
     })
 }

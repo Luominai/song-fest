@@ -5,17 +5,35 @@
 import { Socket } from "socket.io-client"
 
 export default function useGameReceivers(socket: Socket, gameSetters: any) {
-    const {setCurrentSong, setPhase, setPlayer} = gameSetters
+    const {setCurrentSong, setPhase, setPlayer, setHost, setParticipants} = gameSetters
 
-    socket.on("connect", () => {
-        const sessionId = socket.id
-        console.log(sessionId)
-        console.log("game socket connect")
-        socket.emit("getGameStatus", sessionId)
+    socket.on("receiveGameState", (serverGameState) => {
+        console.log(serverGameState)
+        // player is not included here because the server won't know which player you are until you say so
+        setCurrentSong(serverGameState.currentSong)
+        setPhase(serverGameState.phase)
+        setHost(serverGameState.host)
+        setParticipants(serverGameState.participants)
     })
-    // need to add a receiver on server end for this
-    socket.on("receiveGameStatus", (gameStatus) => {
-        setCurrentSong(gameStatus.currentSong)
-        setPhase(gameStatus.phase)
+    socket.on("updatePlayer", (state) => {
+        console.log(`server requesting to update Player to ${state}`)
+        setPlayer(state)
+    })
+    socket.on("updatePhase", (state) => {
+        console.log(`server requesting to update Phase to ${state}`)
+        setPhase(state)
+    })
+    socket.on("updateCurrentSong", (state) => {
+        console.log(`server requesting to update CurrentSong to ${state}`)
+        setCurrentSong(state)
+    })
+    // not sure if these 2 will see any use but might as well have them in case they do
+    socket.on("updateHost", (state) => {
+        console.log(`server requesting to update Host to ${state}`)
+        setHost(state)
+    })
+    socket.on("updateParticipants", (state) => {
+        console.log(`server requesting to update Participants to ${state}`)
+        setParticipants(state)
     })
 }

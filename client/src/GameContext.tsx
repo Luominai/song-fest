@@ -17,15 +17,37 @@ const defaultSong = {
 }
 
 interface Game {
-    currentSong: Song,
-    setCurrentSong: Function
+    player: string | null,
+    setPlayer: Function,
+    
+    currentSong: Song | null,
+    setCurrentSong: Function,
+
+    phase: number,
+    setPhase: Function,
+
+    participants: Array<string>
+    setParticipants: Function,
+
+    host: string | null,
+    setHost: Function
 }
 
 const GameContext = createContext<Game>({
-    currentSong: defaultSong,
-    setCurrentSong: () => {},
+    player: null,
+    setPlayer: () => {},
 
+    currentSong: null,
+    setCurrentSong: () => {},
     
+    phase: 0,
+    setPhase: () => {},
+
+    participants: [],
+    setParticipants: () => {},
+
+    host: null,
+    setHost: () => {}
 })
 
 export default GameContext

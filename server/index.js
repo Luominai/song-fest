@@ -39,10 +39,20 @@ let songfestStatus = {
 
 // variables relating to the game state
 let gameState = {
+    "participants": [],         // copy of participants from SongfestStatus
+    "host": "",                 // copy of host from SongfestStatus
+
     "currentSong": 0,           // index of current song in songEmbedData
     "currentSongSubmitter": "", // name of the person who submitted the current song
     "everyoneRated": false,     // boolean indicating if everyone has given their rating for the current song
     "everyoneGuessed": false,   // boolean indicating if everyone has given their guess for the current song
+
+    "playerToSocketId": {},     // maps a player name to their socket id
+                                // {
+                                //     "kevin": "ZjKjkawAYn",
+                                //     "better kevin": "aka755LV-aj"
+                                // }        
+
     "phase": "rating",          // string indicating what phase of the game we're on
                                 // rating phase: 
                                 //      players watch the song and give it 2 scores. 
@@ -62,6 +72,7 @@ let gameState = {
                                 //      the youtube videos appear one by one and the submitter is revealed.
                                 //      participants get points.
                                 //      at the end, players and songs are sorted by descending points in a leaderboard
+
     "participantsLockedIn": [], // when a player submits their rating, add their name to this list so they don't resubmit
                                 // [
                                 //     "kevin",
@@ -175,9 +186,9 @@ io.on('connection', (socket) => {
         songfestStatus["host"] = state
         io.emit('updateHost', state)
     })
-    socket.on('getSongfestStatus', (id) => {
-        console.log(`sending SongfestStatus to ${id}\n`)
-        io.to(id).emit('receiveSongfestStatus', songfestStatus)
+    socket.on('getSongfestStatus', () => {
+        console.log(`sending SongfestStatus to ${socket.id}\n`)
+        socket.emit('receiveSongfestStatus', songfestStatus)
     })
     socket.on("startGame", async () => {
         const embedData = []
@@ -214,8 +225,11 @@ io.on('connection', (socket) => {
         // update gameStart
 
         // emit update gameStart 
+        io.emit("startGame")
     })
-    
+
+    // ======================== game state sockets ========================
+
 })
 
 server.listen(3000, () => {

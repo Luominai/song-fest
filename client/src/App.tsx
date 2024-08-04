@@ -19,6 +19,7 @@ function App() {
     useEffect(() => {
         socket.on("connect", () => {
             setSocketConnected(true)
+            console.log(socket.id)
         })
     },[])
 

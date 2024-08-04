@@ -22,10 +22,14 @@ import useGameReceivers from "./GameSocketReceivers"
 
 function Game({socket}: {socket: Socket}) {
     const gameStateReceived = useRef(false)
-
-    const [currentSong, setCurrentSong] = useState<Song | null>(null)
+    // when playing the game, the only thing you'd need to change on the server is the phase and who you are playing as
     const [phase, setPhase] = useState<number>(0)
     const [player, setPlayer] = useState<string | null>(null)
+
+    // these state variables do not have a corresponding emit function. these only change locally
+    const [currentSong, setCurrentSong] = useState<Song | null>(null)
+    const [participants, setParticipants] = useState([])
+    const [host, setHost] = useState<string | null>(null)
 
     const gameEmitters = getGameEmitters(socket)
 
@@ -34,28 +38,52 @@ function Game({socket}: {socket: Socket}) {
         useGameReceivers(socket, {
             "setCurrentSong":setCurrentSong,
             "setPhase":setPhase,
-            "setPlayer":setPlayer
+            "setPlayer":setPlayer,
+            "setHost":setHost,
+            "setParticipants":setParticipants
         })
-        if (!gameStateReceived) {
-            gameEmitters
+        if (!gameStateReceived.current) {
+            gameEmitters.getGameState()
+            gameStateReceived.current = true
         }
     }, [socket])
 
+    let renderedComponent
+
     if (player == null) {
-        return <GamePlayerSelect/>
+        renderedComponent = <GamePlayerSelect/>
     }
     else if (phase == 0) {
-        return <GameRating/>
+        renderedComponent = <GameRating/>
     }
     else if (phase == 1) {
-        return <GameRatingReview/>
+        renderedComponent = <GameRatingReview/>
     }
     else if (phase == 2) {
-        return <GameGuessing/>
+        renderedComponent = <GameGuessing/>
     }
     else if (phase == 3) {
-        return <GameGuessingReview/>
+        renderedComponent = <GameGuessingReview/>
     }
+
+    return (
+        <GameContext.Provider value={{
+            player: player,
+            setPlayer: gameEmitters.emitPlayer,
+            phase: phase,
+            setPhase: gameEmitters.emitPhase,
+
+            currentSong: currentSong,
+            setCurrentSong: setCurrentSong,
+            participants: participants,
+            setParticipants: setParticipants,
+            host: host,
+            setHost: setHost
+        }}
+        >
+            {renderedComponent}
+        </GameContext.Provider>
+    )
 }
 
 export default Game
