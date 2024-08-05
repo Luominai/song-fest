@@ -5,15 +5,17 @@
 import { Socket } from "socket.io-client"
 
 export default function useGameReceivers(socket: Socket, gameSetters: any) {
-    const {setCurrentSong, setPhase, setPlayer, setHost, setParticipants} = gameSetters
+    const {setCurrentSong, setPhase, setPlayer, setHost, setParticipants, setPlayerNamesTaken} = gameSetters
 
     socket.on("receiveGameState", (serverGameState) => {
+        console.log("received game state")
         console.log(serverGameState)
         // player is not included here because the server won't know which player you are until you say so
         setCurrentSong(serverGameState.currentSong)
         setPhase(serverGameState.phase)
         setHost(serverGameState.host)
         setParticipants(serverGameState.participants)
+        setPlayerNamesTaken(serverGameState.playerNamesTaken)
     })
     socket.on("updatePlayer", (state) => {
         console.log(`server requesting to update Player to ${state}`)
@@ -24,16 +26,21 @@ export default function useGameReceivers(socket: Socket, gameSetters: any) {
         setPhase(state)
     })
     socket.on("updateCurrentSong", (state) => {
-        console.log(`server requesting to update CurrentSong to ${state}`)
+        console.log(`server requesting to update CurrentSong to`, state)
         setCurrentSong(state)
     })
+    socket.on("updatePlayersNamesTaken", (state) => {
+        console.log(`player name availability has changed to`, state)
+        setPlayerNamesTaken(state)
+    })
+
     // not sure if these 2 will see any use but might as well have them in case they do
     socket.on("updateHost", (state) => {
         console.log(`server requesting to update Host to ${state}`)
         setHost(state)
     })
     socket.on("updateParticipants", (state) => {
-        console.log(`server requesting to update Participants to ${state}`)
+        console.log(`server requesting to update Participants to`, state)
         setParticipants(state)
     })
 }

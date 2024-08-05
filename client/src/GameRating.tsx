@@ -17,13 +17,12 @@ const defaultSong = {
     "submitter": "test"
 }
 
-export default function GameRating() {
-    const [currentSong, setCurrentSong] = useState<Song | null>(defaultSong)
+export default function GameRating({currentSong}: {currentSong: Song}) {
     
     return (
         <>
             <div>
-                this is the game screen
+                Rate the Song
             </div>
 
             {(currentSong != null) 

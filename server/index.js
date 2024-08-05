@@ -42,33 +42,41 @@ let gameState = {
     "participants": [],         // copy of participants from SongfestStatus
     "host": "",                 // copy of host from SongfestStatus
 
-    "currentSong": 0,           // index of current song in songEmbedData
+    "currentSongIndex": 0,      // index of current song in songEmbedData
+    "currentSong": {},          // the current song   
+                                // {
+                                //     "videoId": "${videoId}",
+                                //     "startSeconds": 8.1394,
+                                //     "endSeconds": 21.4598,
+                                //     "clipId": "${clipId}",
+                                //     "submitter": "kevin"
+                                // }    
     "currentSongSubmitter": "", // name of the person who submitted the current song
     "everyoneRated": false,     // boolean indicating if everyone has given their rating for the current song
     "everyoneGuessed": false,   // boolean indicating if everyone has given their guess for the current song
 
-    "playerToSocketId": {},     // maps a player name to their socket id
-                                // {
-                                //     "kevin": "ZjKjkawAYn",
-                                //     "better kevin": "aka755LV-aj"
-                                // }        
+    "playerNamesTaken": [],     // Tracks players and their socket ids
+                                // [
+                                //      {"name": "kevin", "id": "ajjkbakjbf", "taken": true},
+                                //      {"name": "better kevin", "id": null, "taken": false}
+                                // ]        
 
-    "phase": "rating",          // string indicating what phase of the game we're on
-                                // rating phase: 
+    "phase": 0,                 // string indicating what phase of the game we're on
+                                // 0: rating phase: 
                                 //      players watch the song and give it 2 scores. 
                                 //      one for how much it fit the theme (doesn't fit / fits okay / fits great)
                                 //      one for how much they like the clip. (sounds bad / sounds okay / sounds great)
                                 //      there is a time limit but no penalty for being slow.
-                                // review rating phase:
+                                // 1: review rating phase:
                                 //      players see how many votes each option receives and the total score.
                                 //      once everyone votes to continue, the game goes to the next phase.
-                                // guessing phase: 
+                                // 2: guessing phase: 
                                 //      players guess who submitted the song.
                                 //      points received decreases over time.
-                                // review guessing phase:
+                                // 3: review guessing phase:
                                 //      players see how many vote everyone got but not who submitted.
                                 //      once everyone votes to continue, the game goes to the next phase.
-                                // reveal phase: 
+                                // 4: reveal phase: 
                                 //      the youtube videos appear one by one and the submitter is revealed.
                                 //      participants get points.
                                 //      at the end, players and songs are sorted by descending points in a leaderboard
@@ -140,9 +148,20 @@ async function getSongData(song) {
     console.log(clipData)
 
     // get specific parts of data
-    const startSeconds = clipData["items"][0]["clip"]["startTimeMs"] / 1000
-    const endSeconds = clipData["items"][0]["clip"]["endTimeMs"] / 1000
-    const videoId = idData["items"][0]["videoId"]
+    const startSeconds = clipData.items[0]?.clip?.startTimeMs / 1000
+    const endSeconds = clipData.items[0]?.clip?.endTimeMs / 1000
+    const videoId = idData.items[0]?.videoId
+    // const startSeconds = clipData["items"][0]["clip"]["startTimeMs"] / 1000
+    // const endSeconds = clipData["items"][0]["clip"]["endTimeMs"] / 1000
+    // const videoId = idData["items"][0]["videoId"]
+    if (startSeconds == undefined || endSeconds == undefined || videoId == undefined) {
+        return {
+            "videoId": "fq3abPnEEGE",
+            "startSeconds": 0,
+            "endSeconds": 60,
+            "clipId": "N/A",
+        }
+    }
 
     return {
         "videoId": videoId,
@@ -222,6 +241,15 @@ io.on('connection', (socket) => {
         console.log("================== songEmbedData ==================")
         console.log(embedData)
 
+        // update playerNamesTaken
+        gameState["playerNamesTaken"] = songfestStatus.participants.map((participant) => {
+            return {
+                "name": participant,
+                "id": null,
+                "taken": false
+            }
+        })
+
         // update gameStart
 
         // emit update gameStart 
@@ -229,7 +257,38 @@ io.on('connection', (socket) => {
     })
 
     // ======================== game state sockets ========================
+    socket.on("getGameState", () => {
+        socket.emit("receiveGameState", gameState)
+    })
+    socket.on("updatePhase", (state) => {
+        gameState.phase = state
+        io.emit("updatePhase", state)
+    })
+    socket.on("updatePlayer", (state) => {
+        // if the player name is not taken, then let the person requesting have it
+        const player = gameState.playerNamesTaken.find((entry) => entry.name == state)
+        const nameTaken = player.taken
+        if (!nameTaken) {
+            // find the player and update their id
+            const indexOfPlayer = gameState.playerNamesTaken.findIndex((entry) => entry == player)
+            gameState.playerNamesTaken[indexOfPlayer].id = socket.id
+            gameState.playerNamesTaken[indexOfPlayer].taken = true
 
+            // update on the player's end
+            socket.emit("updatePlayer", state)
+
+            // update the list of available player names on everyone's end
+            io.emit("updatePlayerNamesTaken", gameState.playerNamesTaken)
+        }
+    })
+    socket.on("disconnect", () => {
+        // on disconnect, remove socket id from player
+        const indexOfPlayer = gameState.playerNamesTaken.findIndex((entry) => entry.id == socket.id)
+        if (indexOfPlayer != -1) {
+            gameState.playerNamesTaken[indexOfPlayer].id = null
+            gameState.playerNamesTaken[indexOfPlayer].taken = false
+        }
+    })
 })
 
 server.listen(3000, () => {

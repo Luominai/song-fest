@@ -19,15 +19,25 @@ import GameContext from "./GameContext"
 import { Socket } from "socket.io-client"
 import getGameEmitters from "./GameSocketEmitters"
 import useGameReceivers from "./GameSocketReceivers"
+import PlayerName from "./types/PlayerName"
+
+const defaultSong = {
+    "videoId": "fq3abPnEEGE",
+    "startSeconds": 0,
+    "endSeconds": 60,
+    "clipId": "N/A",
+    "submitter": "kevin"
+}
 
 function Game({socket}: {socket: Socket}) {
     const gameStateReceived = useRef(false)
     // when playing the game, the only thing you'd need to change on the server is the phase and who you are playing as
     const [phase, setPhase] = useState<number>(0)
     const [player, setPlayer] = useState<string | null>(null)
+    const [playerNamesTaken, setPlayerNamesTaken] = useState<Array<PlayerName>>([])
 
     // these state variables do not have a corresponding emit function. these only change locally
-    const [currentSong, setCurrentSong] = useState<Song | null>(null)
+    const [currentSong, setCurrentSong] = useState<Song>(defaultSong)
     const [participants, setParticipants] = useState([])
     const [host, setHost] = useState<string | null>(null)
 
@@ -40,7 +50,8 @@ function Game({socket}: {socket: Socket}) {
             "setPhase":setPhase,
             "setPlayer":setPlayer,
             "setHost":setHost,
-            "setParticipants":setParticipants
+            "setParticipants":setParticipants,
+            "setPlayerNamesTaken":setPlayerNamesTaken
         })
         if (!gameStateReceived.current) {
             gameEmitters.getGameState()
@@ -51,10 +62,10 @@ function Game({socket}: {socket: Socket}) {
     let renderedComponent
 
     if (player == null) {
-        renderedComponent = <GamePlayerSelect/>
+        renderedComponent = <GamePlayerSelect playerNames={playerNamesTaken}/>
     }
     else if (phase == 0) {
-        renderedComponent = <GameRating/>
+        renderedComponent = <GameRating currentSong={currentSong}/>
     }
     else if (phase == 1) {
         renderedComponent = <GameRatingReview/>

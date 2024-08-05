@@ -1,16 +1,29 @@
 import { useContext } from "react"
 import GameContext from "./GameContext"
+import PlayerName from "./types/PlayerName";
 
-export default function GamePlayerSelect() {
+export default function GamePlayerSelect({playerNames}: {playerNames: Array<PlayerName>}) {
     const gameState = useContext(GameContext);
-    const participants = ["jfeioab", "my name is jeff", "diddy kong"]
+    const participants = [
+        {"name": "jfeioab", "id": "aaaaaaa", "taken": true},
+        {"name": "my name is jeff", "id": null, "taken": false},
+        {"name": "diddy kong", "id": null, "taken": false}
+    ]
+
     return (
         <>
+            <h3>Select Your Name</h3>
             <form className="playerSelect">
-                {participants.map((name) => {
+                {playerNames.map((playerName) => {
                     return (
-                        <button>
-                            {name}
+                        <button
+                        type="button"
+                        onClick={() => {
+                            gameState.setPlayer(playerName.name)
+                        }}
+                        disabled={playerName.taken}
+                        >
+                            {playerName.name}
                         </button>
                     )
                 })}
