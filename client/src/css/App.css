@@ -75,3 +75,21 @@
   opacity: 0;
   animation: fadeInUp 0.5s ease-out forwards;
 }
+
+.playerSelect {
+  background-color: #f1edff;
+  border-width: 3px;
+  border-style: solid;
+  padding: 20px;
+  width: max-content;
+  max-width: 400px;
+  border-radius: 40px;
+  justify-content: space-evenly;
+  box-shadow: #64646f4d 0 7px 29px;
+  position: fixed;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%);
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
