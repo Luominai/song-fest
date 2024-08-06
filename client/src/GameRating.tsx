@@ -18,6 +18,7 @@ const defaultSong = {
 }
 
 export default function GameRating({currentSong}: {currentSong: Song}) {
+    console.log("currently playing", currentSong)
     
     return (
         <>
@@ -25,8 +26,6 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 Rate the Song
             </div>
 
-            {(currentSong != null) 
-            ? 
             <YouTube
             className={"youtube"}
             videoId={currentSong.videoId}
@@ -38,11 +37,6 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 }
             }}
             />
-            :
-            <div>
-                placeholder
-            </div>
-            }
         </>
     )
 }
