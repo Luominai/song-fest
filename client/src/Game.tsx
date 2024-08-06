@@ -61,7 +61,7 @@ function Game({socket}: {socket: Socket}) {
 
     let renderedComponent
 
-    if (player == null) {
+    if (player == null || phase == -1) {
         renderedComponent = <GamePlayerSelect playerNames={playerNamesTaken}/>
     }
     else if (phase == 0) {

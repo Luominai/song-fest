@@ -63,7 +63,8 @@ let gameState = {
                                 //      {"name": "better kevin", "id": null, "taken": false}
                                 // ]        
 
-    "phase": 0,                 // string indicating what phase of the game we're on
+    "phase": -1,                // string indicating what phase of the game we're on
+                                // -1: player select screen
                                 // 0: rating phase: 
                                 //      players watch the song and give it 2 scores. 
                                 //      one for how much it fit the theme (doesn't fit / fits okay / fits great)

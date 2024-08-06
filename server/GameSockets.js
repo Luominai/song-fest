@@ -5,8 +5,14 @@ module.exports = {
             socket.emit("receiveGameState", gameState)
         })
         socket.on("updatePhase", (state) => {
-            gameState.phase = state
-            io.emit("updatePhase", state)
+            // check if the socket is the host before changing phases
+            const player = gameState.playerNamesTaken.find((entry) => entry.id == socket.id)
+            const host = gameState.playerNamesTaken.find((entry) => entry.name == gameState.host)
+            if (player == host) {
+                console.log(`updated phase to ${state}`)
+                gameState.phase = state
+                io.emit("updatePhase", state)   
+            }
         })
         socket.on("updatePlayer", (state) => {
             // if the player name is not taken, then let the person requesting have it
@@ -17,6 +23,8 @@ module.exports = {
                 const indexOfPlayer = gameState.playerNamesTaken.findIndex((entry) => entry == player)
                 gameState.playerNamesTaken[indexOfPlayer].id = socket.id
                 gameState.playerNamesTaken[indexOfPlayer].taken = true
+
+                console.log(`registered ${socket.id} as ${state}`)
 
                 // update on the player's end
                 socket.emit("updatePlayer", state)

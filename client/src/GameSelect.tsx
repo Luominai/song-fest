@@ -4,11 +4,11 @@ import PlayerName from "./types/PlayerName";
 
 export default function GamePlayerSelect({playerNames}: {playerNames: Array<PlayerName>}) {
     const gameState = useContext(GameContext);
-    const participants = [
-        {"name": "jfeioab", "id": "aaaaaaa", "taken": true},
-        {"name": "my name is jeff", "id": null, "taken": false},
-        {"name": "diddy kong", "id": null, "taken": false}
-    ]
+    // const participants = [
+    //     {"name": "jfeioab", "id": "aaaaaaa", "taken": true},
+    //     {"name": "my name is jeff", "id": null, "taken": false},
+    //     {"name": "diddy kong", "id": null, "taken": false}
+    // ]
 
     return (
         <>
@@ -28,6 +28,16 @@ export default function GamePlayerSelect({playerNames}: {playerNames: Array<Play
                     )
                 })}
             </form>
+            <button
+            type="button"
+            disabled={gameState.player != gameState.host}
+            onClick={() => {
+                // go to the rating phase. The server will check if you are the host and have permission to press this.
+                gameState.setPhase(0)
+            }}
+            >
+                Start
+            </button>
         </>
     )
 }
