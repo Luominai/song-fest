@@ -5,7 +5,7 @@
 import { Socket } from "socket.io-client"
 
 export default function useGameReceivers(socket: Socket, gameSetters: any) {
-    const {setCurrentSong, setPhase, setPlayer, setHost, setParticipants, setPlayerNamesTaken} = gameSetters
+    const {setCurrentSong, setPhase, setPlayer, setHost, setParticipants, setPlayerNamesTaken, setThemeDistribution, setLikedDistribution} = gameSetters
 
     socket.on("receiveGameState", (serverGameState) => {
         console.log("received game state")
@@ -32,6 +32,14 @@ export default function useGameReceivers(socket: Socket, gameSetters: any) {
     socket.on("updatePlayersNamesTaken", (state) => {
         console.log(`player name availability has changed to`, state)
         setPlayerNamesTaken(state)
+    })
+    socket.on("updateThemeDistribution", (state) => {
+        console.log(`theme distribution`, state)
+        setThemeDistribution(state)
+    })
+    socket.on("updateLikedDistribution", (state) => {
+        console.log(`theme distribution`, state)
+        setLikedDistribution(state)
     })
 
     // not sure if these 2 will see any use but might as well have them in case they do

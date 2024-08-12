@@ -20,5 +20,9 @@ export default function getGameEmitters(socket: Socket) {
             console.log(`asking server to register ${socket.id} as ${state}`)
             socket.emit("updatePlayer", state)
         },
+        "rate":(score: {"score": string, "theme": string}) => {
+            console.log(`scoring song likeability as`, score)
+            socket.emit("rate", score)
+        }
     }
 }

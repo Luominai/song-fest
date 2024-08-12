@@ -29,6 +29,7 @@ export default function GamePlayerSelect({playerNames}: {playerNames: Array<Play
                 })}
             </form>
             <button
+            style={{marginTop: 100}}
             type="button"
             disabled={gameState.player != gameState.host}
             onClick={() => {

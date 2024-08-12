@@ -41,5 +41,39 @@ module.exports = {
                 gameState.playerNamesTaken[indexOfPlayer].taken = false
             }
         })
+
+        socket.on("rate", (score) => {
+            const index = gameState.songScores.findIndex((song) => song.clipId == gameState.currentSong.clipId)
+            let song = gameState.songScores[index]
+            const player = gameState.playerNamesTaken.find((player) => player.id == socket.id) 
+            
+            // update scores if this player has not submitted a score yet
+            if (!gameState.participantsLockedIn.includes(player.name)) {
+                song.likedDistribution[score.liked] += 1
+                song.themeDistribution[score.theme] += 1
+
+                gameState.songScores[index] = song
+                gameState.participantsLockedIn.push(player.name)
+                console.log(gameState.participantsLockedIn)
+
+                console.log(`${player.name} has submitted their rating:`, score)
+            }
+
+            // if everyone has submitted, end this phase
+            if (gameState.participantsLockedIn.length == gameState.participants.length) {
+                gameState.phase += 1
+                io.emit("updateThemeDistribution", {
+                    ...song.themeDistribution,
+                    ["sum"]: Object.values(song.themeDistribution).reduce(
+                        (runningSum, currentValue) => {
+                            return runningSum + currentValue
+                        }, 0
+                    )
+                })
+                io.emit("updateLikedDistribution", song.likedDistribution)
+                io.emit("updatePhase", gameState.phase) 
+                console.log(`updated phase to ${gameState.phase}`)
+            }
+        })
     }
 }

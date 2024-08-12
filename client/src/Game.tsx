@@ -40,6 +40,18 @@ function Game({socket}: {socket: Socket}) {
     const [currentSong, setCurrentSong] = useState<Song>(defaultSong)
     const [participants, setParticipants] = useState([])
     const [host, setHost] = useState<string | null>(null)
+    const [themeDistribution, setThemeDistribution] = useState({
+        "low": 1,
+        "mid": 2,
+        "high": 3,
+        "sum": 6
+    })
+    const [likedDistribution, setLikedDistribution] = useState({
+        "low": 1,
+        "mid": 2,
+        "high": 3,
+        "sum": 6
+    })
 
     const gameEmitters = getGameEmitters(socket)
 
@@ -51,7 +63,9 @@ function Game({socket}: {socket: Socket}) {
             "setPlayer":setPlayer,
             "setHost":setHost,
             "setParticipants":setParticipants,
-            "setPlayerNamesTaken":setPlayerNamesTaken
+            "setPlayerNamesTaken":setPlayerNamesTaken,
+            "setThemeDistribution":setThemeDistribution,
+            "setLikedDistribution":setLikedDistribution
         })
         if (!gameStateReceived.current) {
             gameEmitters.getGameState()
@@ -68,7 +82,7 @@ function Game({socket}: {socket: Socket}) {
         renderedComponent = <GameRating currentSong={currentSong}/>
     }
     else if (phase == 1) {
-        renderedComponent = <GameRatingReview/>
+        renderedComponent = <GameRatingReview themeDistribution={themeDistribution} likedDistribution={likedDistribution}/>
     }
     else if (phase == 2) {
         renderedComponent = <GameGuessing/>
@@ -89,7 +103,9 @@ function Game({socket}: {socket: Socket}) {
             participants: participants,
             setParticipants: setParticipants,
             host: host,
-            setHost: setHost
+            setHost: setHost,
+
+            rate: gameEmitters.rate
         }}
         >
             {renderedComponent}

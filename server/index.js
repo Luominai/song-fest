@@ -90,6 +90,9 @@ let gameState = {
                                 //     "better kevin"
                                 // ]
 
+    "participantsRated": [],
+    "participantsGuessed": [],
+
     "songEmbedData": [],        // array of data needed to create the youtube embed of the clip
                                 // this data will get passed to the client when the songs plays during the game
                                 // the server will loop through this array and send the data each round
@@ -103,22 +106,35 @@ let gameState = {
                                 //     }
                                 // ]
 
-    "songScores": {},           // map containing data for each song 
-                                // {
-                                //     "${clipId}": {
+    "songScores": [],           // map containing data for each song 
+                                // [
+                                //     {
+                                //         "videoId": "${videoId}"
+                                //         "clipId": "${clipId}" 
                                 //         "themeScore": 1, 
                                 //         "likedScore": 1, 
-                                //         "submitter": "kevin"
+                                //         "submitter": "kevin",
+                                //         "themeDistribution": {
+                                //              "low": 1,
+                                //              "mid": 0,
+                                //              "high": 0
+                                //         },
+                                //         "likedDistribution": {
+                                //              "low": 1,
+                                //              "mid": 0,
+                                //              "high": 0
+                                //         }
                                 //     }
-                                // }
+                                // ]
 
-    "playerScores": {},         // map containing data for each player 
-                                // {
-                                //     "kevin" : {
+    "playerScores": [],         // map containing data for each player 
+                                // [
+                                //     {
                                 //         "themeScore": 1, 
-                                //         "likedScore": 1
+                                //         "likedScore": 1,
+                                //         "playerName": "kevin" 
                                 //     }
-                                // }
+                                // ]
 }
 
 io.on('connection', (socket) => { 

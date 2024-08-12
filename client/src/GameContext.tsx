@@ -30,7 +30,9 @@ interface Game {
     setParticipants: Function,
 
     host: string | null,
-    setHost: Function
+    setHost: Function,
+
+    rate: Function
 }
 
 const GameContext = createContext<Game>({
@@ -47,7 +49,9 @@ const GameContext = createContext<Game>({
     setParticipants: () => {},
 
     host: null,
-    setHost: () => {}
+    setHost: () => {},
+
+    rate: () => {}
 })
 
 export default GameContext
