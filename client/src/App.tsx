@@ -5,11 +5,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import './css/App.css'
-import Game from './Game'
+import GameApp from './GameApp'
 import { io, Socket } from 'socket.io-client'
-import Songfest from './Songfest'
-import ServerToClientEvents from './types/ServerToClientEvents'
-import ClientToServerEvents from './types/ClientToServerEvents'
+import SongfestApp from './SongfestApp'
+import {ClientToServerEvents, ServerToClientEvents} from "../../common"
 
 // connect to socket server
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io()
@@ -30,10 +29,10 @@ function App() {
 
     if (socketConnected) {
         if (gameStart) {
-            return <Game socket={socket}/>
+            return <GameApp socket={socket}/>
         }
         else {
-            return <Songfest socket={socket}/>
+            return <SongfestApp socket={socket}/>
         }
     }
     else return (

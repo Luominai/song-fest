@@ -1,11 +1,7 @@
 import { Socket, Server } from "socket.io"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
-import Songfest from "./Songfest"
-import ClientToServerEvents from "./types/ClientToServerEvents"
-import ServerToClientEvents from "./types/ServerToClientEvents"
-import ClientSong from "./types/ClientSong"
-import Song from "./Song"
-import Player from "./Player"
+import { ClientToServerEvents, ServerToClientEvents, Songfest, ClientSong, Player, Song } from "../../common"
+
 
 export default function registerSongfestHandler(socket: Socket<ClientToServerEvents, ServerToClientEvents, DefaultEventsMap, any>, songfestStatus: Songfest, io: Server<ClientToServerEvents, ServerToClientEvents, DefaultEventsMap, any>) {
     socket.on("cancelSongfest", () => {

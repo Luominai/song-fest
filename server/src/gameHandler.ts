@@ -1,9 +1,6 @@
 import { Socket, Server } from "socket.io"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
-import Game from "./Game"
-import ClientToServerEvents from "./types/ClientToServerEvents"
-import ServerToClientEvents from "./types/ServerToClientEvents"
-import Score from "./types/Score"
+import { ClientToServerEvents, Game, Score, ServerToClientEvents } from "../../common"
 
 export default function registerGameHandler(socket: Socket<ClientToServerEvents, ServerToClientEvents, DefaultEventsMap, any>, game: Game, io: Server<ClientToServerEvents, ServerToClientEvents, DefaultEventsMap, any>) {
     socket.on("nextPhase", () => {

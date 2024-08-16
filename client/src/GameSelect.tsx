@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import GameContext from "./GameContext"
-import Player from "./types/Player";
+import {Player} from "../../common"
 
 export default function GamePlayerSelect({playerNames}: {playerNames: Array<Player>}) {
     const gameState = useContext(GameContext);

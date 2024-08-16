@@ -14,10 +14,7 @@ const io = new Server<
 // import functions
 import registerSongfestHandler from "./songfestHandler"
 import registerGameHandler from "./gameHandler"
-import Game from "./Game";
-import ClientToServerEvents from "./types/ClientToServerEvents";
-import ServerToClientEvents from "./types/ServerToClientEvents";
-import Songfest from "./Songfest";
+import { ClientToServerEvents, ServerToClientEvents, Songfest, Game } from "../../common";
 
 
 // how to account for duplicate songs?

@@ -6,8 +6,7 @@
  */
 
 import { createContext } from "react";
-import ClientSongfest from "./types/ClientSongfest";
-import ClientToServerEvents from "./types/ClientToServerEvents";
+import {ClientSongfest, ClientToServerEvents} from "../../common"
 
 interface SongfestStatus {
     state: ClientSongfest

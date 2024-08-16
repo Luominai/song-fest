@@ -12,12 +12,12 @@ import { useState, useEffect, useRef } from "react"
 import SongfestOpen from "./SongfestOpen"
 import SongfestClosed from "./SongfestClosed"
 import { Socket } from "socket.io-client"
-import ClientSongfest from "./types/ClientSongfest"
+import {ClientSongfest} from "../../common"
 import { SongfestContext, SongfestContextDefault } from "./SongfestContext"
 import registerSongfestEmitter from "./songfestEmitter"
 import registerSongfestHandler from "./songfestHandler"
 
-function Songfest({socket}: {socket: Socket}) {
+function SongfestApp({socket}: {socket: Socket}) {
     const songfestStatusReceived = useRef(false)
     const [songfestStatus, setSongfestStatus] = useState<ClientSongfest>(SongfestContextDefault.state)
 
@@ -47,4 +47,4 @@ function Songfest({socket}: {socket: Socket}) {
     )
 }
 
-export default Songfest
+export default SongfestApp

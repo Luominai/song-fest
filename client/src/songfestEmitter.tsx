@@ -3,10 +3,7 @@
  */
 
 import { Socket } from "socket.io-client"
-import ClientToServerEvents from "./types/ClientToServerEvents"
-import ServerToClientEvents from "./types/ServerToClientEvents"
-import Score from "./types/Score"
-import ClientSong from "./types/ClientSong"
+import {ClientSong, ClientToServerEvents, Score, ServerToClientEvents} from "../../common"
 
 export default function registerSongfestEmitter(socket: Socket<ServerToClientEvents, ClientToServerEvents>) {
     return {

@@ -14,14 +14,13 @@ import GameRatingReview from "./GameRatingReview"
 import GameGuessing from "./GameGuessing"
 import GameGuessingReview from "./GameGuessingReview"
 import GamePlayerSelect from "./GameSelect"
-import Song from "./types/Song"
 import GameContext from "./GameContext"
 import { Socket } from "socket.io-client"
 import getGameEmitters from "./gameEmitter"
 import useGameReceivers from "./gameHandler"
-import Player from "./types/Player"
+import { Player, Song } from "../../common"
 
-function Game({socket}: {socket: Socket}) {
+function GameApp({socket}: {socket: Socket}) {
     const gameStateReceived = useRef(false)
     // when playing the game, the only thing you'd need to change on the server is the phase and who you are playing as
     const [phase, setPhase] = useState<number>(0)
@@ -105,4 +104,4 @@ function Game({socket}: {socket: Socket}) {
     )
 }
 
-export default Game
+export default GameApp
