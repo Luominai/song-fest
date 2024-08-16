@@ -8,40 +8,27 @@
  * @param startGame     A function passed in from App.tsx that starts the game when called. Ex: startGame()   
  */
 
-import { useContext, useState, useEffect, useRef } from "react"
-import SongfestStatusContext from "./SongfestStatusContext"
+import { useState, useEffect, useRef } from "react"
 import SongfestOpen from "./SongfestOpen"
 import SongfestClosed from "./SongfestClosed"
-import getSongfestEmitters from "./SongfestSocketEmitters"
-import useSongfestReceivers from "./SongfestSocketReceivers"
 import { Socket } from "socket.io-client"
+import ClientSongfest from "./types/ClientSongfest"
+import { SongfestContext, SongfestContextDefault } from "./SongfestContext"
+import registerSongfestEmitter from "./songfestEmitter"
+import registerSongfestHandler from "./songfestHandler"
 
-function Songfest({socket, startGame}: {socket: Socket, startGame: Function}) {
+function Songfest({socket}: {socket: Socket}) {
     const songfestStatusReceived = useRef(false)
+    const [songfestStatus, setSongfestStatus] = useState<ClientSongfest>(SongfestContextDefault.state)
 
-    // songfest variables
-    const [songfestOpen, setSongfestOpen] = useState(false)
-    const [participants, setParticipants] = useState([])
-    const [songs, setSongs] = useState({})
-    const [songsPerPerson, setSongsPerPerson] = useState(1)
-    const [theme, setTheme] = useState("")
-    const [host, setHost] = useState("")
-
-    const songfestEmitters = getSongfestEmitters(socket)
+    const songfestEmitters = registerSongfestEmitter(socket)
 
     useEffect(() => {
         // this function handles messages from the server
         // setter functions are passed in so the functions can actually change the state locally
-        useSongfestReceivers(socket, {
-            "setSongfestOpen":setSongfestOpen, 
-            "setParticipants":setParticipants, 
-            "setSongs":setSongs, 
-            "setSongsPerPerson":setSongsPerPerson, 
-            "setTheme":setTheme, 
-            "setHost":setHost,
+        registerSongfestHandler(socket, setSongfestStatus)
 
-            "startGame": startGame
-        })
+        // one-time get songfestStatus from server on connect
         if (!songfestStatusReceived.current) {
             songfestEmitters.getSongfestStatus()
             songfestStatusReceived.current = true
@@ -50,25 +37,12 @@ function Songfest({socket, startGame}: {socket: Socket, startGame: Function}) {
 
     return (
         <>
-            <SongfestStatusContext.Provider value={{
-                songfestOpen: songfestOpen,
-                setSongfestOpen: songfestEmitters.emitSongfestOpen,
-                participants: participants,
-                setParticipants: songfestEmitters.emitParticipants,
-                songs: songs,
-                setSongs: songfestEmitters.emitSongs,
-                songsPerPerson: songsPerPerson,
-                setSongsPerPerson: songfestEmitters.emitSongsPerPerson,
-                theme: theme,
-                setTheme: songfestEmitters.emitTheme,
-                host: host,
-                setHost: songfestEmitters.emitHost,
-
-                // startGame: startGame
-                startGame: songfestEmitters.startGame
+            <SongfestContext.Provider value={{
+                state: songfestStatus,
+                emitFunctions: songfestEmitters
             }}>
-                {songfestOpen ? <SongfestOpen/> : <SongfestClosed />}
-            </SongfestStatusContext.Provider>
+                {songfestStatus.songfestOpen ? <SongfestOpen/> : <SongfestClosed />}
+            </SongfestContext.Provider>
         </>
     )
 }

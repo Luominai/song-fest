@@ -4,7 +4,7 @@
 
 import { Socket } from "socket.io-client"
 
-export default function getGameEmitters(socket: Socket) {
+export default function registerGameEmitters(socket: Socket) {
     return {
         "getGameState":() => {
             console.log("asking server for game state")

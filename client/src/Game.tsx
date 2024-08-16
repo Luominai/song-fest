@@ -17,27 +17,19 @@ import GamePlayerSelect from "./GameSelect"
 import Song from "./types/Song"
 import GameContext from "./GameContext"
 import { Socket } from "socket.io-client"
-import getGameEmitters from "./GameSocketEmitters"
-import useGameReceivers from "./GameSocketReceivers"
-import PlayerName from "./types/PlayerName"
-
-const defaultSong = {
-    "videoId": "fq3abPnEEGE",
-    "startSeconds": 0,
-    "endSeconds": 60,
-    "clipId": "N/A",
-    "submitter": "kevin"
-}
+import getGameEmitters from "./gameEmitter"
+import useGameReceivers from "./gameHandler"
+import Player from "./types/Player"
 
 function Game({socket}: {socket: Socket}) {
     const gameStateReceived = useRef(false)
     // when playing the game, the only thing you'd need to change on the server is the phase and who you are playing as
     const [phase, setPhase] = useState<number>(0)
     const [player, setPlayer] = useState<string | null>(null)
-    const [playerNamesTaken, setPlayerNamesTaken] = useState<Array<PlayerName>>([])
+    const [playerNamesTaken, setPlayerNamesTaken] = useState<Array<Player>>([])
 
     // these state variables do not have a corresponding emit function. these only change locally
-    const [currentSong, setCurrentSong] = useState<Song>(defaultSong)
+    const [currentSong, setCurrentSong] = useState<Song | null>(null)
     const [participants, setParticipants] = useState([])
     const [host, setHost] = useState<string | null>(null)
     const [themeDistribution, setThemeDistribution] = useState({

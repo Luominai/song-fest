@@ -4,14 +4,12 @@
  * Renders SongfestCreationPopup.tsx when the button is pressed
  */
 
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { createPortal } from 'react-dom';
-import SongfestStatusContext from "./SongfestStatusContext"
 import ShitfestLogo from "./assets/SongShitfestLogo.png"
 import SongfestCreationPopup from "./SongfestCreationPopup"
 
 function SongfestClosed() {
-    const SongfestStatus = useContext(SongfestStatusContext)
     const [showModal, setShowModal] = useState(false);
 
     return (

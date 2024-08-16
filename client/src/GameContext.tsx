@@ -6,7 +6,7 @@
  */
 
 import { createContext } from "react";
-import Song from "./types/Song"
+import Song from "./types/Song";
 
 const defaultSong = {
     "videoId": "A8DI6DF4r3Q",

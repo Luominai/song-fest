@@ -4,11 +4,10 @@
  */
 
 import { useContext, useState } from "react"
-import { createPortal } from "react-dom"
-import SongfestStatusContext from "./SongfestStatusContext"
+import { SongfestContext } from "./SongfestContext"
 
 function SongfestCreationPopup( {onClose}: {onClose: any} ) {
-    const SongfestStatus = useContext(SongfestStatusContext)
+    const SongfestStatus = useContext(SongfestContext)
     const [theme, setTheme] = useState("")
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [host, setHost] = useState("")
@@ -41,19 +40,13 @@ function SongfestCreationPopup( {onClose}: {onClose: any} ) {
                 /> <br></br> <br></br>
 
                 <center>
-                <button type="button" className='button' onClick={(event) => {
-                    event.preventDefault()
-                    // open the songfest and update corresponding variables
-                    SongfestStatus.setSongfestOpen(true)
-                    SongfestStatus.setSongsPerPerson(songsPerPerson)
-                    SongfestStatus.setTheme(theme)
-                    SongfestStatus.setHost(host)
-
-                    // add host to list of participants
-                    const copy = [...SongfestStatus.participants]
-                    copy.push(host)
-                    SongfestStatus.setParticipants(copy)
-                    return false
+                <button type="button" className='button' onClick={() => {
+                    // start the songfest and update corresponding variables
+                    SongfestStatus.emitFunctions.startSongfest({
+                        "songsPerPerson": songsPerPerson,
+                        "theme": theme,
+                        "host": host
+                    })
                 }}>
                     Submit
                 </button>

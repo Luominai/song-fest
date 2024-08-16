@@ -3,15 +3,15 @@
  * On submit, this updates the corresponding variables in Songfest.tsx as well as serverside in index.js 
  */
 
-import { Fragment, useContext, useState } from "react"
-import SongfestStatusContext from "./SongfestStatusContext"
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
+import { useContext, useState } from "react"
+import { SongfestContext } from "./SongfestContext"
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
 
 function SongfestSubmissionPopup({onClose}: {onClose: any}) {
-    const SongfestStatus = useContext(SongfestStatusContext)
-    const [participant, setParticipant] = useState<string | null>(null)
+    const SongfestStatus = useContext(SongfestContext)
+    const [playerName, setPlayerName] = useState<string | null>(null)
     const [query, setQuery] = useState<string>("")
-    const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus.songsPerPerson}).map((value) => ""))
+    const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus.state.songsPerPerson}).map((value) => ""))
 
     return (
         <>
@@ -25,14 +25,23 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 <br></br> <br></br>
 
                 <p>Name:</p>
-                <Combobox value={participant} onChange={(value) => {
+                <Combobox value={playerName} onChange={(value) => {
                     // set the participant
-                    setParticipant(value)
-                    // if the participant is not null, try to get the array of songs they have saved. Empty if no saved songs, or no participant
-                    const participantSongs = ((value != null) ? (SongfestStatus.songs[value] ?? null) : null)
+                    setPlayerName(value)
+                    // if the participant is null, stop here
+                    if (value == null) {
+                        return
+                    }
+                    // try to get the array of songs the participant has saved
+                    const participantSongs = SongfestStatus.state.players.find((entry) => entry.name == value)?.songs
+                    if (!participantSongs) {
+                        return
+                    }
+                    // map the array of songs to an array of song urls
+                    const songUrls = participantSongs.map((entry) => entry.url)
                     // set the songs to the particpant's songs that they've entered previously (if they exist)
                     if (participantSongs != null) {
-                        setSongs(participantSongs)
+                        setSongs(songUrls)
                     }
                 }} onClose={() => setQuery("")} immediate>
                     {/* the query state variable updates to match what the user types */}
@@ -40,20 +49,20 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                     <ComboboxOptions anchor="bottom start" className=" group border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible [--anchor-max-height:80px] hover:text-white">
                         {/* dynamically create an option based off what the user is typing. */}
                         {/* this option will show if the query is not whitespace and if the query does not match an existing participant*/}
-                        {query.trim().length > 0 && !SongfestStatus.participants.includes(query) && (
+                        {query.trim().length > 0 && !SongfestStatus.state.players.map((entry) => entry.name).includes(query) && (
                         <ComboboxOption value={query} className="bg-[#A6B5EA] hover:bg-[#6f71b2]">
                             Create <span className="font-bold">"{query}"</span>
                         </ComboboxOption>
                         )}
 
                         {// filter the list of participants using the query
-                        SongfestStatus.participants.filter((person) => {
-                            return person.toLowerCase().includes(query.toLowerCase())
+                        SongfestStatus.state.players.filter((person) => {
+                            return person.name.toLowerCase().includes(query.toLowerCase())
                         })
                         // for every participant remaining, create an option for them in the combobox
                         .map((person, index) => (
-                            <ComboboxOption value={person} key={index} className="bg-[#A6B5EA] hover:bg-[#6f71b2]">
-                                {person}
+                            <ComboboxOption value={person.name} key={index} className="bg-[#A6B5EA] hover:bg-[#6f71b2]">
+                                {person.name}
                             </ComboboxOption>
                         ))}
                     </ComboboxOptions>
@@ -61,7 +70,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 <br></br> <br></br>
 
                 {/* create inputs for song urls. the number of inputs is determined by SongfestStatus.songsPerPerson */}
-                {Array.from({length: SongfestStatus.songsPerPerson}).map((_, index) => {
+                {Array.from({length: SongfestStatus.state.songsPerPerson}).map((_, index) => {
                     return (
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
@@ -82,18 +91,17 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
 
                 <center>
                 <button type="button" onClick={() => {
-                    if (participant != null) {
-                        // add / update the participant's songs
-                        let updatedSongs = {...SongfestStatus.songs}
-                        updatedSongs[participant] = songs
-                        SongfestStatus.setSongs(updatedSongs)
-
-                        // add the participant to the list of participants if they aren't there
-                        if (!SongfestStatus.participants.includes(participant)) {
-                            let updatedParticipants = [...SongfestStatus.participants]
-                            updatedParticipants.push(participant)
-                            SongfestStatus.setParticipants(updatedParticipants)
+                    const songData = songs.map((songUrl) => {
+                        return {
+                            "url": songUrl
                         }
+                    })
+
+                    if (playerName != null) {
+                        SongfestStatus.emitFunctions.submitSongs({
+                            playerName: playerName,
+                            songData: songData
+                        })
                     }
                     onClose()
                 }}>

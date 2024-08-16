@@ -4,7 +4,7 @@
 
 import { Socket } from "socket.io-client"
 
-export default function useGameReceivers(socket: Socket, gameSetters: any) {
+export default function registerGameReceivers(socket: Socket, gameSetters: any) {
     const {setCurrentSong, setPhase, setPlayer, setHost, setParticipants, setPlayerNamesTaken, setThemeDistribution, setLikedDistribution} = gameSetters
 
     socket.on("receiveGameState", (serverGameState) => {

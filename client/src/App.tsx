@@ -6,11 +6,13 @@
 import { useEffect, useRef, useState } from 'react'
 import './css/App.css'
 import Game from './Game'
-import { io } from 'socket.io-client'
+import { io, Socket } from 'socket.io-client'
 import Songfest from './Songfest'
+import ServerToClientEvents from './types/ServerToClientEvents'
+import ClientToServerEvents from './types/ClientToServerEvents'
 
 // connect to socket server
-const socket = io()
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io()
 
 function App() {
     const [socketConnected, setSocketConnected] = useState(false)
@@ -21,14 +23,17 @@ function App() {
             setSocketConnected(true)
             console.log(socket.id)
         })
-    },[])
+        socket.on("startGame", () => {
+            setGameStart(true)
+        })
+    },[socket])
 
     if (socketConnected) {
         if (gameStart) {
             return <Game socket={socket}/>
         }
         else {
-            return <Songfest socket={socket} startGame={() => setGameStart(true)}/>
+            return <Songfest socket={socket}/>
         }
     }
     else return (
