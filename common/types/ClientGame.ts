@@ -1,6 +1,6 @@
-import ClientSong from "./ClientSong"
+import Game from "../classes/Game"
 
-export default interface ClientGame {
-    host: string
-    currentSong: ClientSong
+export default interface ClientGame extends 
+Omit<Game, "submitter"> {
+    
 }

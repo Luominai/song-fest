@@ -4,8 +4,8 @@
  */
 
 import { useContext, useState } from "react"
-import { SongfestContext } from "./SongfestContext"
-import ShitfestLogo from "./assets/SongShitfestLogo.png"
+import SongfestContext from "./SongfestContext"
+import ShitfestLogo from "../assets/SongShitfestLogo.png"
 import SongfestSubmissionPopup from "./SongfestSubmissionPopup"
 import { createPortal } from "react-dom"
 
@@ -13,13 +13,17 @@ function SongfestOpen() {
     const SongfestStatus = useContext(SongfestContext)
     const [showModal, setShowModal] = useState(false);
 
+    if (SongfestStatus == null) {
+        return
+    }
+
     return (
         <>
             <div>
                 <img src={ShitfestLogo} className='logo'></img>
             </div>
             <div>
-                <p>Theme: {SongfestStatus.state.theme}</p>
+                <p>Theme: {SongfestStatus.state?.theme}</p>
 
             <br></br>
                 <button onClick={() => {setShowModal(true)}}>

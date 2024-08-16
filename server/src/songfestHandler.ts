@@ -29,22 +29,25 @@ export default function registerSongfestHandler(socket: Socket<ClientToServerEve
         const songs: Array<Song> = data.songData.map((clientSong) => {
             // if a start and end time are given, use them
             if ("startSeconds" in clientSong && "endSeconds" in clientSong) {
-                const song = new Song(clientSong.url, player, clientSong.startSeconds, clientSong.endSeconds)
+                const song = new Song(clientSong.url, data.playerName, clientSong.startSeconds, clientSong.endSeconds)
                 return song
             }
             else {
-                const song = new Song(clientSong.url, player)
+                const song = new Song(clientSong.url, data.playerName)
                 return song
             }
         })
 
-        // initialize all songs
-        songs.forEach(async (song) => {
-            await song.init()
-        })
+        socket.emit("startProcessingSongs")
+
+        const songPromises = songs.map((song) => song.init())
+        await Promise.all(songPromises)
 
         // set the player's songs equal to the newly created songs
         player.songs = songs
+        console.dir(songfestStatus, {depth: null})
+
+        socket.emit("endProcessingSongs")
 
         // emit the updated state
         io.emit("updateSongfestStatus", songfestStatus)
@@ -58,11 +61,13 @@ export default function registerSongfestHandler(socket: Socket<ClientToServerEve
         // set the settings
         songfestStatus.songsPerPerson = settings.songsPerPerson
         songfestStatus.theme = settings.theme
-        songfestStatus.host = settings.host
+        songfestStatus.host = new Player(settings.host)
         // open the songfest
         songfestStatus.songfestOpen = true
         // add the host to the list of participants
-        songfestStatus.players.push(new Player(songfestStatus.host))
+        songfestStatus.players.push(songfestStatus.host)
+
+        console.dir(songfestStatus, {depth: null})
         io.emit("updateSongfestStatus", (songfestStatus))
     })
 

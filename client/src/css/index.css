@@ -102,13 +102,13 @@ input {
 /*for small phones*/
 @media (max-width: 425px) {
   #root {
-    max-width: 320px;
+    max-width: 350px;
   }
   * {
-    font-size: 85%;
+    font-size: 88%;
   }
   button {
-    font-size: 85%;
+    font-size: 88%;
   }
 }
 

@@ -1,29 +1,23 @@
 import { useContext } from "react"
 import GameContext from "./GameContext"
-import {Player} from "../../common"
 
-export default function GamePlayerSelect({playerNames}: {playerNames: Array<Player>}) {
+export default function GamePlayerSelect() {
     const gameState = useContext(GameContext);
-    // const participants = [
-    //     {"name": "jfeioab", "id": "aaaaaaa", "taken": true},
-    //     {"name": "my name is jeff", "id": null, "taken": false},
-    //     {"name": "diddy kong", "id": null, "taken": false}
-    // ]
 
     return (
         <>
             <h3>Select Your Name</h3>
             <form className="playerSelect">
-                {playerNames.map((playerName) => {
+                {gameState?.state?.players.map((player) => {
                     return (
                         <button
                         type="button"
                         onClick={() => {
-                            gameState.setPlayer(playerName.name)
+                            gameState?.emitFunctions.registerSocketToPlayer(player.name)
                         }}
-                        disabled={playerName.taken}
+                        disabled={player.taken}
                         >
-                            {playerName.name}
+                            {player.name}
                         </button>
                     )
                 })}
@@ -31,10 +25,10 @@ export default function GamePlayerSelect({playerNames}: {playerNames: Array<Play
             <button
             style={{marginTop: 100}}
             type="button"
-            disabled={gameState.player != gameState.host}
+            disabled={gameState?.myPlayer == null || gameState?.myPlayer.name != gameState?.state?.host.name}
             onClick={() => {
                 // go to the rating phase. The server will check if you are the host and have permission to press this.
-                gameState.setPhase(0)
+                gameState?.emitFunctions.nextPhase()
             }}
             >
                 Start

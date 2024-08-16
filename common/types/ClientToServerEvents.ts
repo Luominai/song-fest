@@ -4,6 +4,7 @@ import Score from "./Score";
 export default interface ClientToServerEvents {
     cancelSongfest: () => void
 
+    getGameStatus: () => void
     getSongfestStatus: () => void
 
     submitSongs: (data: {

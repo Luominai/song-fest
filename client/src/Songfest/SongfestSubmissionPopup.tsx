@@ -4,14 +4,18 @@
  */
 
 import { useContext, useState } from "react"
-import { SongfestContext } from "./SongfestContext"
+import SongfestContext from "./SongfestContext"
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
 
 function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const SongfestStatus = useContext(SongfestContext)
     const [playerName, setPlayerName] = useState<string | null>(null)
     const [query, setQuery] = useState<string>("")
-    const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus.state.songsPerPerson}).map((value) => ""))
+    const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus?.state?.songsPerPerson ?? 0}).map((value) => ""))
+
+    if (SongfestStatus == null) {
+        return
+    }
 
     return (
         <>
@@ -33,7 +37,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                         return
                     }
                     // try to get the array of songs the participant has saved
-                    const participantSongs = SongfestStatus.state.players.find((entry) => entry.name == value)?.songs
+                    const participantSongs = SongfestStatus.state?.players.find((entry) => entry.name == value)?.songs
                     if (!participantSongs) {
                         return
                     }
@@ -49,14 +53,14 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                     <ComboboxOptions anchor="bottom start" className=" group border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible [--anchor-max-height:80px] hover:text-white">
                         {/* dynamically create an option based off what the user is typing. */}
                         {/* this option will show if the query is not whitespace and if the query does not match an existing participant*/}
-                        {query.trim().length > 0 && !SongfestStatus.state.players.map((entry) => entry.name).includes(query) && (
+                        {query.trim().length > 0 && !SongfestStatus.state?.players.map((entry) => entry.name).includes(query) && (
                         <ComboboxOption value={query} className="bg-[#A6B5EA] hover:bg-[#6f71b2]">
                             Create <span className="font-bold">"{query}"</span>
                         </ComboboxOption>
                         )}
 
                         {// filter the list of participants using the query
-                        SongfestStatus.state.players.filter((person) => {
+                        SongfestStatus.state?.players.filter((person) => {
                             return person.name.toLowerCase().includes(query.toLowerCase())
                         })
                         // for every participant remaining, create an option for them in the combobox
@@ -70,7 +74,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 <br></br> <br></br>
 
                 {/* create inputs for song urls. the number of inputs is determined by SongfestStatus.songsPerPerson */}
-                {Array.from({length: SongfestStatus.state.songsPerPerson}).map((_, index) => {
+                {Array.from({length: SongfestStatus.state?.songsPerPerson ?? 0}).map((_, index) => {
                     return (
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
@@ -103,9 +107,9 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             songData: songData
                         })
                     }
-                    onClose()
+                    // onClose()
                 }}>
-                    Submit
+                    {SongfestStatus.songsProcessed ? "Submit" : "Processing..."}
                 </button>
                 </center>
             </form>

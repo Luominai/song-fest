@@ -4,7 +4,7 @@ import http from "http"
 
 // setup server
 const app = express()
-app.use(express.static(__dirname + "/dist"));
+app.use(express.static("dist"));
 const server = http.createServer(app)
 const io = new Server<
     ClientToServerEvents, 
@@ -26,22 +26,24 @@ import { ClientToServerEvents, ServerToClientEvents, Songfest, Game } from "../.
 
 // store variables relating to songfest
 const songfest = new Songfest()
-let game: Game
+let game: Game = new Game()
 
 io.on('connection', (socket) => { 
     console.log(socket.id); 
-
-    registerSongfestHandler(socket, songfest, io)
-    if (game) {
-        registerGameHandler(socket, game, io)
-    }
     
     socket.on("startGame", () => {
-        game = new Game(songfest)
+        game.init(songfest)
         io.emit("startGame")
     })
 
+    registerSongfestHandler(socket, songfest, io)
+    registerGameHandler(socket, game, io)
+
     socket.on("disconnect", () => {
+        // if there's no game active, you don't need to do anything
+        if (!game) {
+            return
+        }
         // on disconnect, remove socket from the player who disconnected
         const player = game.players.find((entry) => entry.socketId == socket.id)
         if (player) {

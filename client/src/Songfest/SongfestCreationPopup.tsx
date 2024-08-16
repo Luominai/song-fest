@@ -4,13 +4,17 @@
  */
 
 import { useContext, useState } from "react"
-import { SongfestContext } from "./SongfestContext"
+import SongfestContext from "./SongfestContext"
 
 function SongfestCreationPopup( {onClose}: {onClose: any} ) {
     const SongfestStatus = useContext(SongfestContext)
     const [theme, setTheme] = useState("")
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [host, setHost] = useState("")
+
+    if (SongfestStatus == null) {
+        return
+    }
 
     return (
         <>

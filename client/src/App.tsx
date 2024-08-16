@@ -5,9 +5,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 import './css/App.css'
-import GameApp from './GameApp'
+import GameApp from './Game/GameApp'
 import { io, Socket } from 'socket.io-client'
-import SongfestApp from './SongfestApp'
+import SongfestApp from './Songfest/SongfestApp'
 import {ClientToServerEvents, ServerToClientEvents} from "../../common"
 
 // connect to socket server

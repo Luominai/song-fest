@@ -12,20 +12,20 @@ import { useState, useEffect, useRef } from "react"
 import SongfestOpen from "./SongfestOpen"
 import SongfestClosed from "./SongfestClosed"
 import { Socket } from "socket.io-client"
-import {ClientSongfest} from "../../common"
-import { SongfestContext, SongfestContextDefault } from "./SongfestContext"
+import {ClientSongfest} from "../../../common"
+import SongfestContext from "./SongfestContext"
 import registerSongfestEmitter from "./songfestEmitter"
 import registerSongfestHandler from "./songfestHandler"
 
 function SongfestApp({socket}: {socket: Socket}) {
     const songfestStatusReceived = useRef(false)
-    const [songfestStatus, setSongfestStatus] = useState<ClientSongfest>(SongfestContextDefault.state)
+    const [songfestStatus, setSongfestStatus] = useState<ClientSongfest | null>(null)
+    const [songsProcessed, setSongsProcessed] = useState(true)
 
     const songfestEmitters = registerSongfestEmitter(socket)
 
     useEffect(() => {
-        // this function handles messages from the server
-        // setter functions are passed in so the functions can actually change the state locally
+        // handle all messages relating to setting SongfestStatus
         registerSongfestHandler(socket, setSongfestStatus)
 
         // one-time get songfestStatus from server on connect
@@ -35,11 +35,28 @@ function SongfestApp({socket}: {socket: Socket}) {
         }
     }, [socket])
 
+    // useEffect specifically for feedback on song submission
+    useEffect(() => {
+        socket.on("startProcessingSongs", () => {
+            setSongsProcessed(false)
+        })
+        socket.on("endProcessingSongs", () => {
+            setSongsProcessed(true)
+        })
+    }, [socket])
+
+    if (songfestStatus == null) {
+        return
+    }
+
+    console.log(songfestStatus.songfestOpen)
+
     return (
         <>
             <SongfestContext.Provider value={{
                 state: songfestStatus,
-                emitFunctions: songfestEmitters
+                emitFunctions: songfestEmitters,
+                songsProcessed: songsProcessed
             }}>
                 {songfestStatus.songfestOpen ? <SongfestOpen/> : <SongfestClosed />}
             </SongfestContext.Provider>

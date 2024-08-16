@@ -1,32 +1,17 @@
 import { useContext, useState } from "react"
 import YouTube from "react-youtube"
 import GameContext from "./GameContext"
+import { Score, Song } from "../../../common"
 
-interface Song {
-    "videoId": string,
-    "startSeconds": number,
-    "endSeconds": number,
-    "clipId": string,
-    "submitter": string
-}
-
-const defaultSong = {
-    "videoId": "A8DI6DF4r3Q",
-    "startSeconds": 50,
-    "endSeconds": 70,
-    "clipId": "N/A",
-    "submitter": "test"
-}
-
-export default function GameRating({currentSong}: {currentSong: Song}) {
-    const [likedScore, setLikedScore] = useState<string| null>(null)
-    const [themeScore, setThemeScore] = useState<string| null>(null)
+export default function GameRating() {
+    const [likedScore, setLikedScore] = useState<Score| null>(null)
+    const [themeScore, setThemeScore] = useState<Score| null>(null)
     const [time, setTime] = useState(60000)
     const [timer, setTimer] = useState<number | null>(null)
     const [phaseOver, setPhaseOver] = useState(false)
 
     const gameState = useContext(GameContext)
-    console.log("currently playing", currentSong)
+    console.log("currently playing", gameState?.state?.currentSong)
 
     if (phaseOver) {
         return (
@@ -43,11 +28,11 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
 
             <YouTube
             className={"youtube"}
-            videoId={currentSong.videoId}
+            videoId={gameState?.state?.currentSong.videoId}
             opts={{
                 playerVars: {
-                    start: currentSong.startSeconds,
-                    end: currentSong.endSeconds,
+                    start: gameState?.state?.currentSong.startSeconds,
+                    end: gameState?.state?.currentSong.endSeconds,
                     autoplay: 1,
                 }
             }}
@@ -70,7 +55,7 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 <button 
                 type="button"
                 onClick={() => {
-                    setLikedScore("low")
+                    setLikedScore({low: 1, mid: 0, high: 0, total: 1})
                 }}
                 >
                     low
@@ -78,7 +63,7 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 <button
                 type="button"
                 onClick={() => {
-                    setLikedScore("mid")
+                    setLikedScore({low: 0, mid: 1, high: 0, total: 1})
                 }}
                 >
                     mid
@@ -86,7 +71,7 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 <button
                 type="button"
                 onClick={() => {
-                    setLikedScore("high")
+                    setLikedScore({low: 0, mid: 0, high: 1, total: 1})
                 }}
                 >
                     high
@@ -100,7 +85,7 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 <button 
                 type="button"
                 onClick={() => {
-                    setThemeScore("low")
+                    setThemeScore({low: 1, mid: 0, high: 0, total: 1})
                 }}
                 >
                     low
@@ -108,7 +93,7 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 <button
                 type="button"
                 onClick={() => {
-                    setThemeScore("mid")
+                    setThemeScore({low: 0, mid: 1, high: 0, total: 1})
                 }}
                 >
                     mid
@@ -116,7 +101,7 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
                 <button
                 type="button"
                 onClick={() => {
-                    setThemeScore("high")
+                    setThemeScore({low: 0, mid: 0, high: 1, total: 1})
                 }}
                 >
                     high
@@ -126,13 +111,15 @@ export default function GameRating({currentSong}: {currentSong: Song}) {
             <button
             type="button"
             onClick={() => {
-                gameState.rate({
-                    "liked": likedScore,
-                    "theme": themeScore
-                })
-                setPhaseOver(true)
-                if (timer != null) {
-                    clearInterval(timer)
+                if (likedScore && themeScore) {
+                    gameState?.emitFunctions.rateSong({
+                        liked: likedScore,
+                        theme: themeScore
+                    })
+                    setPhaseOver(true)
+                    if (timer != null) {
+                        clearInterval(timer)
+                    }
                 }
             }}
             >

@@ -6,7 +6,7 @@
 
 import { useState } from "react"
 import { createPortal } from 'react-dom';
-import ShitfestLogo from "./assets/SongShitfestLogo.png"
+import ShitfestLogo from "../assets/SongShitfestLogo.png"
 import SongfestCreationPopup from "./SongfestCreationPopup"
 
 function SongfestClosed() {

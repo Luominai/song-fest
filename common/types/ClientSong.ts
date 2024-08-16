@@ -1,5 +1,6 @@
-export default interface ClientSong {
-    url: string
-    startSeconds: number,
-    endSeconds: number
+import Song from "../classes/Song";
+
+export default interface ClientSong extends
+Omit<Song, "submitter"> {
+
 }
