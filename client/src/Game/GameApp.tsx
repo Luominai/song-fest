@@ -19,6 +19,7 @@ import { Socket } from "socket.io-client"
 import registerGameEmitter from "./gameEmitter"
 import registerGameHandler from "./gameHandler"
 import { ClientGame, Player, Song } from "../../../common"
+import GameSummary from "./GameSummary"
 
 function GameApp({socket}: {socket: Socket}) {
     const gameStateReceived = useRef(false)

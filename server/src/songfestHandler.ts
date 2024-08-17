@@ -33,7 +33,7 @@ export default function registerSongfestHandler(socket: Socket<ClientToServerEve
                 return song
             }
             else {
-                const song = new Song(clientSong.url, data.playerName)
+                const song = new Song(clientSong.url, data.playerName, clientSong.startSeconds, clientSong.endSeconds)
                 return song
             }
         })

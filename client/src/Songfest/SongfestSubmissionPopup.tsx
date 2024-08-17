@@ -12,6 +12,8 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const [playerName, setPlayerName] = useState<string | null>(null)
     const [query, setQuery] = useState<string>("")
     const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus?.state?.songsPerPerson ?? 0}).map((value) => ""))
+    const [startInput, setStartInput] = useState<string>("0:00")
+    const [endInput, setEndInput] = useState<string>("0:15")
 
     if (SongfestStatus == null) {
         return
@@ -76,6 +78,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 {/* create inputs for song urls. the number of inputs is determined by SongfestStatus.songsPerPerson */}
                 {Array.from({length: SongfestStatus.state?.songsPerPerson ?? 0}).map((_, index) => {
                     return (
+                        <>
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
                             {/* the value of the input matches the songs state */}
@@ -89,6 +92,12 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             }}
                             ></input>
                         </div>
+                        <div style={{display: "flex", justifyContent: "center", marginTop: "3px"}}>
+                            <input type="text" id="start" style={{display: "inline", width: "20%", marginRight: "1px"}}/>
+                            <span style={{margin: "auto 2px"}}> to </span>
+                            <input type="text" id="end" style={{display: "inline", width: "20%", marginLeft: "1px"}}/>
+                        </div>
+                        </>
                     )
                 })}
                 <br></br>
