@@ -93,9 +93,17 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             ></input>
                         </div>
                         <div style={{display: "flex", justifyContent: "center", marginTop: "3px"}}>
-                            <input type="text" id="start" style={{display: "inline", width: "20%", marginRight: "1px"}}/>
+                            <input type="text" id="start" 
+                            style={{display: "inline", width: "30%", marginRight: "1px", textAlign: "center"}} 
+                            defaultValue={"00:00.00"}
+                            onChange={(event) => setStartInput(event.target.value)}
+                            />
                             <span style={{margin: "auto 2px"}}> to </span>
-                            <input type="text" id="end" style={{display: "inline", width: "20%", marginLeft: "1px"}}/>
+                            <input type="text" id="end" 
+                            style={{display: "inline", width: "30%", marginLeft: "1px", textAlign: "center"}} 
+                            defaultValue={"00:15.00"}
+                            onChange={(event) => setEndInput(event.target.value)}
+                            />
                         </div>
                         </>
                     )
@@ -104,6 +112,13 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
 
                 <center>
                 <button type="button" disabled={!SongfestStatus.songsProcessed} onClick={() => {
+                    const startTimeValid = startInput.match(/^([0-9]:|0[0-9]:|[0-5][0-9]:)?[0-5][0-9](.[0-9][0-9]|.[0-9])?$/) != null
+                    const endTimeValid = endInput.match(/^([0-9]:|0[0-9]:|[0-5][0-9]:)?[0-5][0-9](.[0-9][0-9]|.[0-9])?$/) != null
+
+                    if (!startTimeValid || !endTimeValid) {
+                        return
+                    }
+
                     const songData = songs.map((songUrl) => {
                         return {
                             "url": songUrl
