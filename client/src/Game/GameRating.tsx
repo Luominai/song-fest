@@ -110,6 +110,7 @@ export default function GameRating() {
 
             <button
             type="button"
+            disabled={gameState?.myPlayer?.name == gameState?.state?.currentSong.submitterName}
             onClick={() => {
                 if (likedScore && themeScore) {
                     gameState?.emitFunctions.rateSong({

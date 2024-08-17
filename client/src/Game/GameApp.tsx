@@ -62,6 +62,9 @@ function GameApp({socket}: {socket: Socket}) {
     else if (gameStatus?.phase == 3) {
         renderedComponent = <GameGuessingReview/>
     }
+    else if (gameStatus?.phase == 4) {
+        renderedComponent = <GameSummary/>
+    }
 
     return (
         <GameContext.Provider value={{

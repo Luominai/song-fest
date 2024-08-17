@@ -27,6 +27,15 @@ export default class Game {
         this.players = songfest.players
         this.host = songfest.host
         this.songs = songfest.players.map((player) => player.songs).flat()
+
+        let guessDistribution = {}
+        this.players.forEach((entry) => {
+            guessDistribution[entry.name] = 0
+        })
+        this.songs.forEach((entry) => {
+            entry.guessDistribution = guessDistribution
+        })
+        
         this.shuffleSongs()
         this.currentSong = this.songs[0]
         this.currentSongIndex = 0

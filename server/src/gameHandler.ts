@@ -9,6 +9,7 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
     })
     socket.on("nextPhase", () => {
         gameStatus.nextPhase()
+        gameStatus.nextSong()
         // update clients on the change
         io.emit("updateGameStatus", gameStatus)
     })
@@ -19,7 +20,7 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
         io.emit("updateGameStatus", gameStatus)
     })
 
-    socket.on("guessSongSubmitter", (guessedPlayerName: string) => {
+    socket.on("guessSongSubmitter", (guess: {playerName: string, time: number}) => {
         // check if the player who guessed exists
         const player = gameStatus.players.find((entry) => entry.socketId == socket.id)
         if (!player) {
@@ -29,10 +30,20 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
         if (gameStatus.playersLockedIn.includes(player.name)) {
             return
         }
-        // if the player guessed correctly, give points and then lock them
-        if (guessedPlayerName == gameStatus.currentSongSubmitter.name) {
+        // lock the player in
+        gameStatus.playersLockedIn.push(player.name)
+
+        // if the player guessed correctly, give points
+        if (guess.playerName == gameStatus.currentSongSubmitter.name) {
             player.guessScore += 1
-            gameStatus.playersLockedIn.push(player.name)
+            console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
+        }
+        
+        // if everyone has guessed, go to next phase
+        if (gameStatus.playersLockedIn.length + 1 == gameStatus.players.length) {
+            gameStatus.playersLockedIn = []
+            gameStatus.nextPhase()
+            io.emit("updateGameStatus", gameStatus)
         }
     })
 
@@ -49,11 +60,21 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
         if (gameStatus.playersLockedIn.includes(player.name)) {
             return
         }
+        // lock the player in
+        gameStatus.playersLockedIn.push(player.name)
+
         // give score to the song and the song's submitter
         gameStatus.currentSong.addToLikedScore(score.liked)
         gameStatus.currentSong.addToThemeScore(score.theme)
         gameStatus.currentSongSubmitter.addToLikedScore(score.liked)
         gameStatus.currentSongSubmitter.addToThemeScore(score.theme)
+
+        // if everyone has scored, go to next phase
+        if (gameStatus.playersLockedIn.length + 1 == gameStatus.players.length) {
+            gameStatus.playersLockedIn = []
+            gameStatus.nextPhase()
+            io.emit("updateGameStatus", gameStatus)
+        }
     })
 
     socket.on("registerSocketToPlayer", (playerName: string) => {

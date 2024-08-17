@@ -10,8 +10,8 @@ export default function registerGameEmitter(socket: Socket<ServerToClientEvents,
         getGameStatus: () => {
             socket.emit("getGameStatus")
         },
-        guessSongSubmitter: (playerName: string) => {
-            socket.emit("guessSongSubmitter", playerName)
+        guessSongSubmitter: (guess: {playerName: string, time: number}) => {
+            socket.emit("guessSongSubmitter", guess)
         },
         nextPhase: () => {
             socket.emit("nextPhase")

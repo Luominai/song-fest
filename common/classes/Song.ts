@@ -25,6 +25,7 @@ export default class Song {
             this.startSeconds = startSeconds
             this.endSeconds = endSeconds
         }
+        this.guessDistribution = {}
     }
 
     url: string
@@ -35,6 +36,7 @@ export default class Song {
     submitterName: string
     themeScore: Score
     likedScore: Score
+    guessDistribution: Record<string,number>
     
     async init() {
         // if the url is a clip, use the youtube operational api to get necessary information

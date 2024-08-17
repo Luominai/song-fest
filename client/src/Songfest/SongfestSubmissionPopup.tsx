@@ -94,7 +94,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 <br></br>
 
                 <center>
-                <button type="button" onClick={() => {
+                <button type="button" disabled={!SongfestStatus.songsProcessed} onClick={() => {
                     const songData = songs.map((songUrl) => {
                         return {
                             "url": songUrl

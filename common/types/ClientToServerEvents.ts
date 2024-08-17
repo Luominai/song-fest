@@ -27,6 +27,6 @@ export default interface ClientToServerEvents {
         liked: Score
         theme: Score
     }) => void
-    guessSongSubmitter: (playerName: string) => void
+    guessSongSubmitter: (guess: {playerName: string, time: number}) => void
 
 }

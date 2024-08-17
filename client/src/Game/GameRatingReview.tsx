@@ -26,10 +26,10 @@ export default function GameRatingReview() {
                 </span>
             </div>
             <div style={{height: 200, width:400, display: "flex"}}>
-                <span style={{width:"33.33%", height: `${likedDistribution.high / likedDistribution.total * 100}%`, backgroundColor: "red"}}>
+                <span style={{width:"33.33%", height: `${likedDistribution.low / likedDistribution.total * 100}%`, backgroundColor: "red"}}>
                     low
                 </span>
-                <span style={{width:"33.33%", height: `${likedDistribution.high / likedDistribution.total * 100}%`, backgroundColor: "yellow"}}>
+                <span style={{width:"33.33%", height: `${likedDistribution.mid / likedDistribution.total * 100}%`, backgroundColor: "yellow"}}>
                     mid
                 </span>
                 <span style={{width:"33.33%", height: `${likedDistribution.high / likedDistribution.total * 100}%`, backgroundColor: "green"}}>
@@ -38,7 +38,6 @@ export default function GameRatingReview() {
             </div>
             <button
             type="button"
-            disabled={gameState?.myPlayer?.name == gameState?.state?.host.name}
             onClick={() => {
                 gameState?.emitFunctions.nextPhase()
             }}
