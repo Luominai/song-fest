@@ -3,19 +3,46 @@
  * On submit, this updates the corresponding variables in Songfest.tsx as well as serverside in index.js 
  */
 
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import SongfestContext from "./SongfestContext"
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
+import { ClientSong } from "../../../common"
 
 function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const SongfestStatus = useContext(SongfestContext)
     const [playerName, setPlayerName] = useState<string | null>(null)
     const [query, setQuery] = useState<string>("")
-    const [songs, setSongs] = useState<Array<string>>(Array.from({length: SongfestStatus?.state?.songsPerPerson ?? 0}).map((value) => ""))
-    const [startInput, setStartInput] = useState<string>("0:00")
-    const [endInput, setEndInput] = useState<string>("0:15")
+    
+    const initialSong = {
+        url: "",
+        startSeconds: 0,
+        endSeconds: 15,
+        startTimeInput: "00:00.00",
+        endTimeInput: "00:00.00"
+    }
+    const initialSongData = Array(SongfestStatus?.state?.songsPerPerson).fill(initialSong)
+    const [songData, setSongData] = useState<Array<ClientSong & {startTimeInput: string, endTimeInput: string}>>(initialSongData)
 
-    if (SongfestStatus == null) {
+    // when playerName changes, update the songData to reflect previously submitted data
+    useEffect(() => {
+        const songs = SongfestStatus?.state?.players.find((entry) => entry.name == playerName)?.songs
+        if (!songs || songs.length == 0) {
+            return
+        }
+        const songData = songs.map((song) => {
+            return {
+                url: song.url,
+                startSeconds: song.startSeconds,
+                endSeconds: song.endSeconds,
+                startTimeInput: secondsToTimeStamp(song.startSeconds),
+                endTimeInput: secondsToTimeStamp(song.endSeconds)
+            }
+        })
+        setSongData(songData)
+        
+    }, [playerName])
+
+    if (SongfestStatus?.state == null) {
         return
     }
 
@@ -34,21 +61,6 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 <Combobox value={playerName} onChange={(value) => {
                     // set the participant
                     setPlayerName(value)
-                    // if the participant is null, stop here
-                    if (value == null) {
-                        return
-                    }
-                    // try to get the array of songs the participant has saved
-                    const participantSongs = SongfestStatus.state?.players.find((entry) => entry.name == value)?.songs
-                    if (!participantSongs) {
-                        return
-                    }
-                    // map the array of songs to an array of song urls
-                    const songUrls = participantSongs.map((entry) => entry.url)
-                    // set the songs to the particpant's songs that they've entered previously (if they exist)
-                    if (participantSongs != null) {
-                        setSongs(songUrls)
-                    }
                 }} onClose={() => setQuery("")} immediate>
                     {/* the query state variable updates to match what the user types */}
                     <ComboboxInput onChange={(event) => setQuery(event.target.value)} displayValue={(person: string) => person}/>
@@ -81,28 +93,54 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                         <>
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
-                            {/* the value of the input matches the songs state */}
-                            <input type="text" value={songs[index] ?? ""} id={"song" + (index + 1)}
+                            {/* fill the input with the url of the song, if the user has previously submitted */}
+                            <input type="text" value={songData[index]?.url ?? ""} id={"song" + (index + 1)}
                             // when a change is made to the input, the songs state is updated accordingly
                             onChange={(event) => {
-                                let copy = [...songs]
-                                copy[index] = event.target.value
+                                let copy = [...songData]
+                                copy[index].url = event.target.value
                                 console.log(copy)
-                                setSongs(copy)
+                                setSongData(copy)
                             }}
                             ></input>
                         </div>
                         <div style={{display: "flex", justifyContent: "center", marginTop: "3px"}}>
-                            <input type="text" id="start" 
+                            <input 
+                            type="text"
                             style={{display: "inline", width: "30%", marginRight: "1px", textAlign: "center"}} 
-                            defaultValue={"00:00.00"}
-                            onChange={(event) => setStartInput(event.target.value)}
+                            value={songData[index].startTimeInput}
+                            onChange={(event) => {
+                                // update input
+                                let copy = [...songData]
+                                copy[index].startTimeInput = event.target.value
+
+                                // if input is valid, also update the start time
+                                const start = timeStampToSeconds(event.target.value)
+                                if (start >= 0) {
+                                    copy[index].startSeconds = start
+                                }
+                                console.log(copy)
+                                setSongData(copy)
+                            }}
                             />
                             <span style={{margin: "auto 2px"}}> to </span>
-                            <input type="text" id="end" 
+                            <input 
+                            type="text"
                             style={{display: "inline", width: "30%", marginLeft: "1px", textAlign: "center"}} 
-                            defaultValue={"00:15.00"}
-                            onChange={(event) => setEndInput(event.target.value)}
+                            value={songData[index].endTimeInput}
+                            onChange={(event) => {
+                                // update input
+                                let copy = [...songData]
+                                copy[index].endTimeInput = event.target.value
+
+                                // if input is valid, also update the end time
+                                const end = timeStampToSeconds(event.target.value)
+                                if (end >= 0) {
+                                    copy[index].endSeconds = end
+                                }
+                                console.log(copy)
+                                setSongData(copy)
+                            }}
                             />
                         </div>
                         </>
@@ -112,24 +150,18 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
 
                 <center>
                 <button type="button" disabled={!SongfestStatus.songsProcessed} onClick={() => {
-                    const startTimeValid = startInput.match(/^([0-9]:|0[0-9]:|[0-5][0-9]:)?[0-5][0-9](.[0-9][0-9]|.[0-9])?$/) != null
-                    const endTimeValid = endInput.match(/^([0-9]:|0[0-9]:|[0-5][0-9]:)?[0-5][0-9](.[0-9][0-9]|.[0-9])?$/) != null
-
-                    if (!startTimeValid || !endTimeValid) {
-                        return
-                    }
-
-                    const songData = songs.map((songUrl) => {
-                        return {
-                            "url": songUrl
-                        }
+                    const songsValid = songData.every((song) => {
+                        return validateYouTubeUrl(song.url) && song.startSeconds >= 0 && song.endSeconds >=0
                     })
 
-                    if (playerName != null) {
+                    if (playerName != null && songsValid) {
                         SongfestStatus.emitFunctions.submitSongs({
                             playerName: playerName,
                             songData: songData
                         })
+                    }
+                    else {
+                        console.log("invalid")
                     }
                     // onClose()
                 }}>
@@ -139,6 +171,56 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
             </form>
         </>
     )
+}
+
+function validateYouTubeUrl(url: string)
+{
+    if (url != undefined || url != '') {
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match && match[2].length == 11) {
+            // Do anything for being valid
+            return true
+        }
+        else {
+            // Do anything for not being valid
+            return false
+        }
+    }
+}
+
+function timeStampToSeconds(timestamp: string) {
+    if (timestamp.match(/^([0-9]:|0[0-9]:|[0-5][0-9]:)?[0-5][0-9](.[0-9][0-9]|.[0-9])?$/) == null) {
+        return -1
+    }
+
+    const timeUnits = timestamp.split(":")
+    let multiplier = 1
+    let time = 0
+    
+    while(timeUnits.length > 0) {
+        time += multiplier * parseFloat(timeUnits[timeUnits.length - 1])
+        timeUnits.pop()
+        multiplier *= 60
+    }
+    return time
+}
+
+function secondsToTimeStamp(timeInSeconds: number) {
+    // convert to string
+    const string = timeInSeconds.toString()
+    // split by decimal
+    const splitString = string.split(".")
+    // get the portions
+    let integerPart: number = parseInt(splitString[0])
+    let decimalPart: string = (splitString.length > 1) ? `.${splitString[1]}` : ""
+
+    // convert the integer part to a timestamp
+    const minutes = Math.floor(integerPart / 60)
+    const seconds = integerPart % 60
+    const timeStamp = `${minutes}:${seconds.toString().padStart(2, "0")}` + decimalPart
+
+    return timeStamp
 }
 
 export default SongfestSubmissionPopup
