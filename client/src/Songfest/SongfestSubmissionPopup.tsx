@@ -99,7 +99,6 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             onChange={(event) => {
                                 let copy = [...songData]
                                 copy[index].url = event.target.value
-                                console.log(copy)
                                 setSongData(copy)
                             }}
                             ></input>
@@ -119,7 +118,6 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                                 if (start >= 0) {
                                     copy[index].startSeconds = start
                                 }
-                                console.log(copy)
                                 setSongData(copy)
                             }}
                             />
@@ -138,7 +136,6 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                                 if (end >= 0) {
                                     copy[index].endSeconds = end
                                 }
-                                console.log(copy)
                                 setSongData(copy)
                             }}
                             />

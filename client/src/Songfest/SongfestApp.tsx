@@ -49,8 +49,6 @@ function SongfestApp({socket}: {socket: Socket}) {
         return
     }
 
-    console.log(songfestStatus.songfestOpen)
-
     return (
         <>
             <SongfestContext.Provider value={{

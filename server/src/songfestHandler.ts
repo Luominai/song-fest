@@ -45,7 +45,7 @@ export default function registerSongfestHandler(socket: Socket<ClientToServerEve
 
         // set the player's songs equal to the newly created songs
         player.songs = songs
-        console.dir(songfestStatus, {depth: null})
+        console.dir(songfestStatus.players, {depth: null})
 
         socket.emit("endProcessingSongs")
 

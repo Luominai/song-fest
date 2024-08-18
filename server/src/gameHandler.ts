@@ -9,7 +9,10 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
     })
     socket.on("nextPhase", () => {
         gameStatus.nextPhase()
-        gameStatus.nextSong()
+        // change the song if the current phase is 0 (the start of a new cycle for a song)
+        if (gameStatus.phase == 0) {
+            gameStatus.nextSong()
+        }
         // update clients on the change
         io.emit("updateGameStatus", gameStatus)
     })
@@ -37,6 +40,11 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
         if (guess.playerName == gameStatus.currentSongSubmitter.name) {
             player.guessScore += 1
             console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
+        }
+
+        // add to the song's guess distribution
+        if (guess.playerName in gameStatus.currentSong.guessDistribution) {
+            gameStatus.currentSong.guessDistribution[guess.playerName] += 1
         }
         
         // if everyone has guessed, go to next phase

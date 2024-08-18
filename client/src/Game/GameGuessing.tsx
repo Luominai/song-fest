@@ -20,21 +20,20 @@ export default function GameGuessing() {
     // on render, start timer
     useEffect(() => {
         const timerId = setInterval(() => {
-            setTime(time - 100)
+            setTime(time => time - 100)
             if (time <= 0) {
                 setPhaseOver(true)
                 clearInterval(timerId)
             }
         }, 100)
         setTimer(timerId)
-
         setIsMySong(gameState.myPlayer?.name == gameState.state?.currentSongSubmitter.name)
     }, [])
 
     if (phaseOver) {
         return (
             <div>
-                You have submitted your guess
+                You have submitted your guess {(time/1000).toString()}
             </div>
         )
     }

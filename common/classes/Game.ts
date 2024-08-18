@@ -33,12 +33,12 @@ export default class Game {
             guessDistribution[entry.name] = 0
         })
         this.songs.forEach((entry) => {
-            entry.guessDistribution = guessDistribution
+            entry.guessDistribution = structuredClone(guessDistribution)
         })
         
         this.shuffleSongs()
         this.currentSong = this.songs[0]
-        this.currentSongIndex = 0
+        this.currentSongIndex = -1
         this.currentSongSubmitter = this.players.find((entry) => entry.name == this.currentSong.submitterName)
         this.phase = -1
         this.playersLockedIn = []
@@ -61,9 +61,15 @@ export default class Game {
     }
 
     nextSong() {
-        this.currentSongIndex += 1
-        this.currentSong = this.songs[this.currentSongIndex]
-        this.currentSongSubmitter = this.players.find((entry) => entry.name == this.currentSong.submitterName)
+        if (this.currentSongIndex >= this.songs.length) {
+            return
+        }
+        const nextSongIndex = this.currentSongIndex + 1
+        const nextSong = this.songs[nextSongIndex]
+        console.log(`switching to song ${nextSongIndex + 1}/${this.songs.length}: ${nextSong.title} from ${nextSong.submitterName}`)
+        this.currentSongIndex = nextSongIndex
+        this.currentSong = nextSong
+        this.currentSongSubmitter = this.players.find((entry) => entry.name == nextSong.submitterName)
     }
 
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

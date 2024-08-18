@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import YouTube from "react-youtube"
 import GameContext from "./GameContext"
 import { Score, Song } from "../../../common"
@@ -9,9 +9,18 @@ export default function GameRating() {
     const [time, setTime] = useState(60000)
     const [timer, setTimer] = useState<number | null>(null)
     const [phaseOver, setPhaseOver] = useState(false)
+    const [isMySong, setIsMySong] = useState(false)
 
     const gameState = useContext(GameContext)
-    console.log("currently playing", gameState?.state?.currentSong)
+
+    if (!gameState?.state?.currentSong) {
+        return
+    }
+    
+    // on render, check if the song was submitted by this player
+    useEffect(() => {
+        setIsMySong(gameState.myPlayer?.name == gameState.state?.currentSongSubmitter.name)
+    }, [])
 
     if (phaseOver) {
         return (
@@ -23,7 +32,7 @@ export default function GameRating() {
     return (
         <>
             <div>
-                Rate the song
+                Rate the song {(time/1000).toString()}
             </div>
 
             <YouTube
@@ -38,7 +47,7 @@ export default function GameRating() {
             }}
             onPlay={() => {
                 const timerId = setInterval(() => {
-                    setTime(time - 100)
+                    setTime(time => time - 100)
                     if (time <= 0) {
                         setPhaseOver(true)
                         clearInterval(timerId)
@@ -124,7 +133,7 @@ export default function GameRating() {
                 }
             }}
             >
-                Confirm
+                {isMySong ? "This is your song" : "Confirm"}
             </button>
         </>
     )
