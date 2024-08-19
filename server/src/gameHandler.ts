@@ -17,12 +17,6 @@ export default function registerGameHandler(socket: Socket<ClientToServerEvents,
         io.emit("updateGameStatus", gameStatus)
     })
 
-    socket.on("nextSong", () => {
-        gameStatus.nextSong()
-        // update clients on the change
-        io.emit("updateGameStatus", gameStatus)
-    })
-
     socket.on("guessSongSubmitter", (guess: {playerName: string, time: number}) => {
         // check if the player who guessed exists
         const player = gameStatus.players.find((entry) => entry.socketId == socket.id)

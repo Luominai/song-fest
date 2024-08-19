@@ -61,7 +61,7 @@ export default function GameGuessing() {
                 <ComboboxOptions anchor="bottom start" className=" group border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible [--anchor-max-height:80px] hover:text-white">
                     {// filter the list of players using the query
                     gameState?.state?.players.filter((person) => {
-                        return person.name.toLowerCase().includes(query.toLowerCase())
+                        return (person.name != gameState.myPlayer?.name) && (person.name.toLowerCase().includes(query.toLowerCase()))
                     })
                     // for every player remaining, create an option for them in the combobox
                     .map((person, index) => (

@@ -12,7 +12,7 @@ interface GameStatus {
     state: ClientGame | null
     emitFunctions: Pick<
         ClientToServerEvents, 
-        "nextPhase" | "nextSong" | "registerSocketToPlayer" | "rateSong" | "guessSongSubmitter"
+        "nextPhase" | "registerSocketToPlayer" | "rateSong" | "guessSongSubmitter" | "getGameStatus"
     >
     myPlayer: Player | null
 }

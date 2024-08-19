@@ -16,9 +16,6 @@ export default function registerGameEmitter(socket: Socket<ServerToClientEvents,
         nextPhase: () => {
             socket.emit("nextPhase")
         },
-        nextSong: () => {
-            socket.emit("nextSong")
-        },
         rateSong: (score: {
             liked: Score
             theme: Score

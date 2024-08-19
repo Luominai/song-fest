@@ -20,7 +20,6 @@ export default interface ClientToServerEvents {
     startGame: () => void
 
     nextPhase: () => void
-    nextSong: () => void
 
     registerSocketToPlayer: (playerName: string) => void
     rateSong: (score: {

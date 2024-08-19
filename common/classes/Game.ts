@@ -51,7 +51,8 @@ export default class Game {
 
     nextPhase() {
         // if we've gone through every song, switch to the end phase
-        if (this.currentSongIndex == this.songs.length) {
+        if (this.currentSongIndex + 1 == this.songs.length) {
+            console.log("game is over")
             this.phase = 4
         }
         // otherwise, go through the regular cycle
