@@ -23,7 +23,7 @@ function SongfestClosed() {
                 Let the Shitfest begin
             </button>
             {showModal && createPortal(
-                <SongfestCreationPopup onClose={() => setShowModal(false)} />,
+                <SongfestCreationPopup closeModal={() => setShowModal(false)} />,
                 document.body
             )}
         </>

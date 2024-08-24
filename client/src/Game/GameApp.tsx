@@ -1,82 +1,35 @@
-/**
- * This is the top-level for all Game components.
- * Contains all the state variables for the Game.
- * Shares all state variables and their setters to all Game components using GameContext.tsx
- * Handles sockets relating to the Game.
- * 
- * @param socket        A socket connection passed in from App.tsx to ensure the same socket connection is used throughout the project
- */
-
-import { useEffect, useRef, useState } from "react"
+import { useContext} from "react"
 import "../css/game.css"
-import GameRating from "./GameRating"
-import GameRatingReview from "./GameRatingReview"
+import { StateContext } from "../Context"
 import GameGuessing from "./GameGuessing"
 import GameGuessingReview from "./GameGuessingReview"
 import GamePlayerSelect from "./GamePlayerSelect"
-import GameContext from "./GameContext"
-import { Socket } from "socket.io-client"
-import registerGameEmitter from "./gameEmitter"
-import registerGameHandler from "./gameHandler"
-import { ClientGame, Player, Song } from "../../../common"
+import GameRating from "./GameRating"
+import GameRatingReview from "./GameRatingReview"
 import GameSummary from "./GameSummary"
 
-function GameApp({socket}: {socket: Socket}) {
-    const gameStateReceived = useRef(false)
-    const [gameStatus, setGameStatus] = useState<ClientGame | null>(null)
-    const [myPlayer, setMyPlayer] = useState<Player | null>(null)
-
-    const gameEmitters = registerGameEmitter(socket)
-
-    useEffect(() => {
-        // use the receivers
-        registerGameHandler(socket, setGameStatus)
-        if (!gameStateReceived.current) {
-            gameEmitters.getGameStatus()
-            gameStateReceived.current = true
-        }
-    }, [socket])
-
-    // useEffect specifically for the client to know which player they are playing as
-    useEffect(() => {
-        const playerWithMySocket = gameStatus?.players.find((entry) => entry.socketId == socket.id)
-        if (playerWithMySocket != null) {
-            setMyPlayer(playerWithMySocket)
-        }
-    }, [gameStatus?.players])
-
-    let renderedComponent
+function GameApp() {
+    const state = useContext(StateContext)
 
     // if the user's socket is not assigned to a Player, or the phase is -1 (choosing your name phase)
-    if (myPlayer == null || gameStatus?.phase == -1) {
-        renderedComponent = <GamePlayerSelect/>
+    if (state.myPlayer == null || state.phase == -1) {
+        return <GamePlayerSelect/>
     }
-    else if (gameStatus?.phase == 0) {
-        renderedComponent = <GameRating/>
+    else if (state.phase == 0) {
+        return <GameRating/>
     }
-    else if (gameStatus?.phase == 1) {
-        renderedComponent = <GameRatingReview/>
+    else if (state.phase == 1) {
+        return <GameRatingReview/>
     }
-    else if (gameStatus?.phase == 2) {
-        renderedComponent = <GameGuessing/>
+    else if (state.phase == 2) {
+        return <GameGuessing/>
     }
-    else if (gameStatus?.phase == 3) {
-        renderedComponent = <GameGuessingReview/>
+    else if (state.phase == 3) {
+        return <GameGuessingReview/>
     }
-    else if (gameStatus?.phase == 4) {
-        renderedComponent = <GameSummary/>
+    else if (state.phase == 4) {
+        return <GameSummary/>
     }
-
-    return (
-        <GameContext.Provider value={{
-            state: gameStatus,
-            emitFunctions: gameEmitters,
-            myPlayer: myPlayer
-        }}
-        >
-            {renderedComponent}
-        </GameContext.Provider>
-    )
 }
 
 export default GameApp

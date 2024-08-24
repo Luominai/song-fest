@@ -1,32 +1,19 @@
-import { Player, Song } from "../../common"
+import { ClientState } from "../../common"
 
-interface State {
-    // app
-    gameInProgress: boolean
-    // songfest
-    songfestOpen: boolean
-    theme: string
-    songsPerPerson: number
-    // game
-    currentSong: Song | null
-    phase: number
-    // both
-    myPlayer: Player | null
-}
 interface UpdateAction {
     type: "update",
-    payload: Partial<State>
+    payload: Partial<ClientState>
 }
 type Action = UpdateAction
 
-function tasksReducer(state: State, action: Action) {
+function tasksReducer(state: ClientState, action: Action) {
     switch(action.type) {
         case "update":
             return {...state, ...action.payload}
     }
     return state
 }
-const initialState: State = {
+const initialState: ClientState = {
     // app
     gameInProgress: false,
     // songfest
@@ -37,7 +24,8 @@ const initialState: State = {
     currentSong: null,
     phase: -1,
     // both
-    myPlayer: null
+    myPlayer: null,
+    playerNames: []
 }
 
 export {tasksReducer, initialState}

@@ -4,23 +4,20 @@
  */
 
 import { useContext, useState } from "react"
-import SongfestContext from "./SongfestContext"
+import { StateContext } from "../Context"
+import { socket } from "../Socket"
 
-function SongfestCreationPopup( {onClose}: {onClose: any} ) {
-    const SongfestStatus = useContext(SongfestContext)
+function SongfestCreationPopup( {closeModal}: {closeModal: any} ) {
+    const state = useContext(StateContext)
     const [theme, setTheme] = useState("")
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [host, setHost] = useState("")
-
-    if (SongfestStatus == null) {
-        return
-    }
 
     return (
         <>
             <form className='popup'>
                 {/* The X button on the popup */}
-                <button style={{float: 'right'}} onClick={onClose}>&times;</button>
+                <button style={{float: 'right'}} onClick={closeModal}>&times;</button>
                 <br></br> <br></br>
                 
                 <label htmlFor="theme">Theme: </label>
@@ -45,8 +42,7 @@ function SongfestCreationPopup( {onClose}: {onClose: any} ) {
 
                 <center>
                 <button type="button" className='button' onClick={() => {
-                    // start the songfest and update corresponding variables
-                    SongfestStatus.emitFunctions.startSongfest({
+                    socket.emit("startSongfest", {
                         "songsPerPerson": songsPerPerson,
                         "theme": theme,
                         "host": host

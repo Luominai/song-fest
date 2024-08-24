@@ -2,6 +2,9 @@ import ClientSong from "./ClientSong";
 import Score from "./Score";
 
 export default interface ClientToServerEvents {
+    getState: () => void
+    getPlayerByName: (name: string) => void
+
     cancelSongfest: () => void
 
     getGameStatus: () => void

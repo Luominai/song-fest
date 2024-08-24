@@ -4,18 +4,15 @@
  */
 
 import { useContext, useState } from "react"
-import SongfestContext from "./SongfestContext"
 import ShitfestLogo from "../assets/SongShitfestLogo.png"
 import SongfestSubmissionPopup from "./SongfestSubmissionPopup"
 import { createPortal } from "react-dom"
+import { StateContext } from "../Context"
+import { socket } from "../Socket"
 
 function SongfestOpen() {
-    const SongfestStatus = useContext(SongfestContext)
+    const state = useContext(StateContext)
     const [showModal, setShowModal] = useState(false);
-
-    if (SongfestStatus == null) {
-        return
-    }
 
     return (
         <>
@@ -23,7 +20,7 @@ function SongfestOpen() {
                 <img src={ShitfestLogo} className='logo'></img>
             </div>
             <div>
-                <p>Theme: {SongfestStatus.state?.theme}</p>
+                <p>Theme: {state.theme}</p>
 
             <br></br>
                 <button onClick={() => {setShowModal(true)}}>
@@ -38,7 +35,7 @@ function SongfestOpen() {
             <br></br>
             <div>
                 <button onClick={() => {
-                    SongfestStatus.emitFunctions.startGame()
+                    socket.emit("startGame")
                 }}>
                     Start Shitfest
                 </button>
@@ -47,7 +44,7 @@ function SongfestOpen() {
             <br></br>
             <div>
                 <button onClick={() => {
-                    SongfestStatus.emitFunctions.cancelSongfest()
+                    socket.emit("cancelSongfest")
                 }}>
                     Cancel Shitfest
                 </button>
