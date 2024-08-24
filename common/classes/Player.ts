@@ -2,6 +2,14 @@ import Song from "./Song"
 import Score from "../types/Score"
 
 export default class Player {
+    name: string
+    socketId: string | null
+    taken: boolean
+    likedScore: Score
+    themeScore: Score
+    guessScore: number
+    songs: Array<Song>
+    
     constructor(name: string) {
         this.name = name
         this.socketId = null
@@ -21,13 +29,6 @@ export default class Player {
         this.guessScore = 0
         this.songs = []
     }
-    name: string
-    socketId: string | null
-    taken: boolean
-    likedScore: Score
-    themeScore: Score
-    guessScore: number
-    songs: Array<Song>
 
     addToThemeScore(value: Score | Omit<Score, "total">) {
         this.themeScore.low += value.low

@@ -19,7 +19,7 @@ function App() {
         socket.emit("getState")
     }, [])
     useEffect(() => {
-        function onUpdateState(newState) {
+        function onUpdateState(newState: Partial<ClientState>) {
             dispatch({type: "update", payload: newState})
         }
         socket.on("updateState", onUpdateState)
