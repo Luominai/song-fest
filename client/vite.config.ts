@@ -8,5 +8,9 @@ export default defineConfig({
   build: {
     outDir: '../server/dist',
     emptyOutDir: true, // also necessary
-  }
+  },
+  esbuild: {
+    minifyIdentifiers: false,
+    keepNames: true,
+  },
 })

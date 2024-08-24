@@ -3,6 +3,15 @@ import Song from "./Song"
 import Songfest from "./Songfest"
 
 export default class Game {
+    host: Player
+    currentSong: Song  
+    currentSongSubmitter: Player
+    currentSongIndex: number
+    players: Array<Player>
+    phase: number
+    songs: Array<Song>
+    playersLockedIn: Array<string>
+    
     constructor() {
         this.players = []
         this.host = null
@@ -13,15 +22,6 @@ export default class Game {
         this.phase = -1
         this.playersLockedIn = []
     }
-
-    host: Player
-    currentSong: Song  
-    currentSongSubmitter: Player
-    currentSongIndex: number
-    players: Array<Player>
-    phase: number
-    songs: Array<Song>
-    playersLockedIn: Array<string>
     
     init(songfest: Songfest) {
         this.players = songfest.players
