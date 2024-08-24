@@ -3,12 +3,10 @@
  * On submit, this updates the corresponding variables in Songfest.tsx as well as serverside in index.js 
  */
 
-import { useContext, useState } from "react"
-import { StateContext } from "../Context"
+import { useState } from "react"
 import { socket } from "../Socket"
 
 function SongfestCreationPopup( {closeModal}: {closeModal: any} ) {
-    const state = useContext(StateContext)
     const [theme, setTheme] = useState("")
     const [songsPerPerson, setSongsPerPerson] = useState(1)
     const [host, setHost] = useState("")
