@@ -10,7 +10,7 @@ export default class Player {
     guessScore: number
     songs: Array<Song>
     
-    constructor(name: string) {
+    constructor(name: string, numberOfSongs: number) {
         this.name = name
         this.socketId = null
         this.taken = false
@@ -27,7 +27,7 @@ export default class Player {
             "total": 0
         }
         this.guessScore = 0
-        this.songs = []
+        this.songs = Array(numberOfSongs).fill(new Song(name))
     }
 
     addToThemeScore(value: Score | Omit<Score, "total">) {

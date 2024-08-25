@@ -14,7 +14,7 @@ interface UpdateSongUrlAction {
 interface UpdateSongTimeAction {
     type: "updateSongTime",
     payload: {
-        timestamp: string,
+        time: number,
         startOrEnd: "start" | "end",
         index: number
     }
@@ -42,12 +42,11 @@ function tasksReducer(state: ClientState, action: Action) {
         case "update":
             return {...state, ...action.payload}
         case "updateSongUrl":
+            // check that myPlayer exists
             if (state.myPlayer) {
-                let updatedSongs: Song[] = [...state.myPlayer.songs]
-                updatedSongs[action.payload.index].url = action.payload.url
-
+                // copy myPlayer and update song url within myPlayer
                 let updatedPlayer: Player = structuredClone(state.myPlayer)
-                updatedPlayer.songs = updatedSongs
+                updatedPlayer.songs[action.payload.index].url = action.payload.url
                 
                 return {...state, ["myPlayer"]: updatedPlayer}
             }
@@ -55,11 +54,20 @@ function tasksReducer(state: ClientState, action: Action) {
                 return state
             }
         case "updateSongTime":
-            if (state.myPlayer) {
-                
+            // check if myPlayer exists and the given song time is valid
+            if (state.myPlayer && action.payload.time >= 0) {
+                // copy myPlayer and update song start / end time within myPlayer
+                let updatedPlayer = structuredClone(state.myPlayer)
+                if (action.payload.startOrEnd == "start") {
+                    updatedPlayer.songs[action.payload.index].startSeconds = action.payload.time
+                }
+                else if (action.payload.startOrEnd == "end") {
+                    updatedPlayer.songs[action.payload.index].endSeconds = action.payload.time
+                }
+                return {...state, ["myPlayer"]: updatedPlayer}
             }
+            return state
     }
-    return state
 }
 const initialState: ClientState = {
     // app
@@ -73,7 +81,7 @@ const initialState: ClientState = {
     phase: -1,
     // both
     myPlayer: null,
-    playerNames: []
+    playerNames: []     // used for Combobox and GameSelect
 }
 
 export {tasksReducer, initialState}

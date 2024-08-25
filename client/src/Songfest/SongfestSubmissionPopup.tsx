@@ -3,21 +3,11 @@
  * On submit, this updates the corresponding variables in Songfest.tsx as well as serverside in index.js 
  */
 
-import { useContext, useEffect, useState } from "react"
-import { ClientSong } from "../../../common"
+import { useContext, useEffect, useRef, useState } from "react"
+import { ClientState } from "../../../common"
 import { DispatchContext, StateContext } from "../Context"
 import { socket } from "../Socket"
 import PlayerNameCombobox from "../Components/PlayerNameCombobox"
-
-// type SongData = ClientSong & {startTimeInput: string, endTimeInput: string}
-
-// const initialSong: SongData = {
-//     url: "",
-//     startSeconds: 0,
-//     endSeconds: 15,
-//     startTimeInput: "00:00.00",
-//     endTimeInput: "00:15.00"
-// }
 
 function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const state = useContext(StateContext)
@@ -25,14 +15,44 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const [playerName, setPlayerName] = useState<string | null>(null)
     const [startTimeInput, setStartTimeInput] = useState(Array(state.songsPerPerson).fill("00:00.00"))
     const [endTimeInput, setEndTimeInput] = useState(Array(state.songsPerPerson).fill("00:15.00"))
+    const [submitButtonLabel, setSubmitButtonLabel] = useState("Submit")
+
+    const timerId = useRef<number | null>(null)
+    const time = useRef<number>(0)
 
     useEffect(() => {
-        if (!state.myPlayer) {
-            return
+        // set the timeInput when 
+        function setTimeInputs(newState: Partial<ClientState>) {
+            if (newState.myPlayer) {
+                console.log(newState.myPlayer)
+                // dispatch({type: "update", payload: {myPlayer: newState.myPlayer}})
+                setStartTimeInput(newState.myPlayer.songs.map((song) => secondsToTimeStamp(song.startSeconds)))
+                setEndTimeInput(newState.myPlayer.songs.map((song) => secondsToTimeStamp(song.endSeconds)))
+            }
         }
-        setStartTimeInput(state.myPlayer.songs.map((song) => secondsToTimeStamp(song.startSeconds)))
-        setEndTimeInput(state.myPlayer.songs.map((song) => secondsToTimeStamp(song.endSeconds)))
-    }, [state.myPlayer])
+        function onEndProcessingSongs() {
+            setSubmitButtonLabel("Done!")
+            time.current = 3000
+            timerId.current = setInterval(() => {
+                time.current -= 100
+                if (time.current <= 0) {
+                    setSubmitButtonLabel("Submit")
+                    if (timerId.current) {
+                        clearInterval(timerId.current)
+                    }
+                }
+            }, 100)
+        }
+        socket.on("updateState", setTimeInputs)
+        socket.on("endProcessingSongs", onEndProcessingSongs)
+        return () => {
+            socket.off("updateState", setTimeInputs)
+            socket.off("endProcessingSongs", onEndProcessingSongs)
+            if (timerId.current) {
+                clearInterval(timerId.current)
+            }
+        }
+    }, [socket])
 
     return (
         <>
@@ -43,12 +63,13 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
 
                 <PlayerNameCombobox onChange={(value: string) => {
                     setPlayerName(value)
+                    console.log(value)
                     socket.emit("getPlayerByName", value)
                 }} enableDynamicOption/>
                 <br></br> <br></br>
 
                 {/* create inputs for song urls. the number of inputs is determined by SongfestStatus.songsPerPerson */}
-                {Array(state.songsPerPerson).map((_, index) => {
+                {Array.from({length: state.songsPerPerson}).map((_, index) => {
                     return (
                         <>
                         <div key={"song" + (index + 1)}>
@@ -56,7 +77,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             <input type="text" 
                             id={"song" + (index + 1)}
                             // fill the input with the url of the song, if the user has previously submitted 
-                            value={state.myPlayer?.songs[index].url ?? ""}
+                            value={state.myPlayer?.songs[index]?.url ?? ""}
                             // when a change is made to the input, the songs state is updated accordingly
                             onChange={(event) => dispatch({type: "updateSongUrl", payload: {url: event.target.value, index: index}})}
                             />
@@ -69,7 +90,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             onChange={(event) => {
                                 //@ts-ignore
                                 setStartTimeInput((input) => input.with(index, event.target.value))
-                                dispatch({type: "updateSongTime", payload: {timestamp: event.target.value, startOrEnd: "start", index: index}})}
+                                dispatch({type: "updateSongTime", payload: {time: timeStampToSeconds(event.target.value), startOrEnd: "start", index: index}})}
                             }/>
 
                             <span style={{margin: "auto 2px"}}> to </span>
@@ -81,7 +102,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             onChange={(event) => {
                                 //@ts-ignore
                                 setEndTimeInput((input) => input.with(index, event.target.value))
-                                dispatch({type: "updateSongTime", payload: {timestamp: event.target.value, startOrEnd: "end", index: index}})}
+                                dispatch({type: "updateSongTime", payload: {time: timeStampToSeconds(event.target.value), startOrEnd: "end", index: index}})}
                             }/>
                         </div>
                         </>
@@ -100,13 +121,14 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                         })
 
                         if (playerName != null && songsValid) {
-                            socket.emit("submitSongs", {
-                                playerName: playerName,
-                                songData: state.myPlayer.songs
-                            })
+                            // socket.emit("submitSongs", {
+                            //     playerName: playerName,
+                            //     songData: state.myPlayer.songs
+                            // })
+                            socket.emit("submitSongs", state.myPlayer)
                         }
                     }}>
-                        Submit
+                        {submitButtonLabel}
                     </button>
                 </center>
             </form>

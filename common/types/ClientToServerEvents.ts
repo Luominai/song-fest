@@ -1,3 +1,4 @@
+import Player from "../classes/Player";
 import ClientSong from "./ClientSong";
 import Score from "./Score";
 
@@ -10,10 +11,7 @@ export default interface ClientToServerEvents {
     getGameStatus: () => void
     getSongfestStatus: () => void
 
-    submitSongs: (data: {
-        playerName: string
-        songData: Array<Pick<ClientSong, "url"> & Partial<Omit<ClientSong, "url">>>
-    }) => void
+    submitSongs: (data: Player) => void
 
     startSongfest: (settings: {
         songsPerPerson: number

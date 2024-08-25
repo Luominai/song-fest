@@ -13,5 +13,5 @@ export default interface State {
     phase: number
     // both
     myPlayer: Player | null
-    playerNames: String[]
+    playerNames: Pick<Player, "name"|"taken">[]
 }

@@ -19,7 +19,17 @@ export default class Song {
     title: string
     thumbnail: string
 
-    constructor(url: string, submitterName: string, startSeconds: number, endSeconds: number) {
+    initialized: boolean
+
+    constructor(submitterName: string) {
+        this.url = ""
+        this.submitterName = submitterName
+        this.startSeconds = 0
+        this.endSeconds = 0
+        this.initialized = false
+    }
+    
+    async init(url: string, submitterName: string, startSeconds: number, endSeconds: number) {
         this.url = url
         this.submitterName = submitterName
         this.startSeconds = startSeconds
@@ -39,10 +49,8 @@ export default class Song {
             total: 0
         }
         this.guessDistribution = {}
-    }
-    
-    async init() {
         this.getSongData()
+        this.initialized = true
     }
 
     private async getSongData() {

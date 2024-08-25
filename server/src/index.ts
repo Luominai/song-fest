@@ -4,17 +4,22 @@ import http from "http"
 
 // setup server
 const app = express()
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 const server = http.createServer(app)
 const io = new Server<
     ClientToServerEvents, 
     ServerToClientEvents
->(server)
+>(server, {
+    cors: {
+        origin: "http://localhost:5173"
+    }
+})
 
 // import functions
-import registerSongfestHandler from "./songfestHandler"
-import registerGameHandler from "./gameHandler"
-import { ClientToServerEvents, ServerToClientEvents, Songfest, Game } from "../../common";
+// import registerSongfestHandler from "./songfestHandler"
+// import registerGameHandler from "./gameHandler"
+import registerHandler from "./handler";
+import { ClientToServerEvents, ServerToClientEvents, Songfest } from "../../common";
 
 
 // how to account for duplicate songs?
@@ -26,26 +31,28 @@ import { ClientToServerEvents, ServerToClientEvents, Songfest, Game } from "../.
 
 // store variables relating to songfest
 const songfest = new Songfest()
-let game: Game = new Game()
+console.log(songfest)
+// let game: Game = new Game()
 
 io.on('connection', (socket) => { 
     console.log(socket.id); 
     
     socket.on("startGame", () => {
-        game.init(songfest)
+        songfest.startGame()
         io.emit("startGame")
     })
 
-    registerSongfestHandler(socket, songfest, io)
-    registerGameHandler(socket, game, io)
+    // registerSongfestHandler(socket, songfest, io)
+    // registerGameHandler(socket, game, io)
+    registerHandler(socket, songfest, io)
 
     socket.on("disconnect", () => {
         // if there's no game active, you don't need to do anything
-        if (!game) {
+        if (!songfest.gameInProgress) {
             return
         }
         // on disconnect, remove socket from the player who disconnected
-        const player = game.players.find((entry) => entry.socketId == socket.id)
+        const player = songfest.players.find((entry) => entry.socketId == socket.id)
         if (player) {
             player.socketId = null
             player.taken = false
