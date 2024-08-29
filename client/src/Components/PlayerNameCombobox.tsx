@@ -1,14 +1,13 @@
 import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from "@headlessui/react"
 import { useContext, useState } from "react"
 import { StateContext } from "../Context"
-import { Player } from "../../../common"
 
 interface PlayerNameCombobox {
     onChange?: (value: string) => void
     enableDynamicOption?: boolean
 }
 
-export default function PlayerNameCombobox({onChange, enableDynamicOption}: PlayerNameCombobox) {
+export default function PlayerNameCombobox({onChange = () => {}, enableDynamicOption = false}: PlayerNameCombobox) {
     const state = useContext(StateContext)
     const [query, setQuery] = useState("")
 

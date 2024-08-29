@@ -36,28 +36,10 @@ console.log(songfest)
 
 io.on('connection', (socket) => { 
     console.log(socket.id); 
-    
-    socket.on("startGame", () => {
-        songfest.startGame()
-        io.emit("startGame")
-    })
 
     // registerSongfestHandler(socket, songfest, io)
     // registerGameHandler(socket, game, io)
     registerHandler(socket, songfest, io)
-
-    socket.on("disconnect", () => {
-        // if there's no game active, you don't need to do anything
-        if (!songfest.gameInProgress) {
-            return
-        }
-        // on disconnect, remove socket from the player who disconnected
-        const player = songfest.players.find((entry) => entry.socketId == socket.id)
-        if (player) {
-            player.socketId = null
-            player.taken = false
-        }
-    })
 
 })
 

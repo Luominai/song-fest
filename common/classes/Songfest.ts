@@ -1,3 +1,4 @@
+import ClientState from "../types/ClientState";
 import Player from "./Player";
 import Song from "./Song";
 
@@ -40,6 +41,7 @@ export default class Songfest {
         this.currentSongSubmitter = this.players.find((entry) => entry.name == this.currentSong.submitterName)
         this.phase = -1
         this.playersLockedIn = []
+        this.gameInProgress = true
     }
 
     updatePlayerSocket(player: Player, socketId: string) {
@@ -89,7 +91,7 @@ export default class Songfest {
     }
 
     toClientState() {
-        return {
+        const clientState: Omit<ClientState, "myPlayer"> = {
             gameInProgress: this.gameInProgress,
             songfestOpen: this.songfestOpen,
             theme: this.theme,
@@ -103,5 +105,6 @@ export default class Songfest {
                 }
             })
         }
+        return clientState
     }
 }

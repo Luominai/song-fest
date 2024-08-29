@@ -1,6 +1,6 @@
 import { Socket, Server } from "socket.io"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
-import { ClientToServerEvents, ServerToClientEvents, Songfest, ClientSong, Player, Song } from "../../common"
+import { ClientToServerEvents, ServerToClientEvents, Songfest, ClientSong, Player, Song, Score } from "../../common"
 
 
 export default function registerHandler(socket: Socket<ClientToServerEvents, ServerToClientEvents, DefaultEventsMap, any>, songfest: Songfest, io: Server<ClientToServerEvents, ServerToClientEvents, DefaultEventsMap, any>) {
@@ -25,9 +25,13 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         // console.dir(songfest, {depth: null})
         io.emit("updateState", songfest.toClientState())
     })
+    socket.on("startGame", () => {
+        songfest.startGame()
+        io.emit("startGame")
+    })
     socket.on("getPlayerByName", (name: string) => {
         let player = songfest.players.find((entry) => entry.name == name)
-        if (!player) {
+        if (!player && name) {
             player = new Player(name, songfest.songsPerPerson)
             songfest.players.push(player)
             // update the state for everyone
@@ -47,5 +51,132 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
             console.dir(player.songs)
             socket.emit("endProcessingSongs")
         })
+    })
+    socket.on("startGame", () => {
+        songfest.startGame()
+        io.emit("updateState", songfest.toClientState())
+    })
+    socket.on("registerSocketToPlayer", (name: string) => {
+        // get the player corresponding to the playerName
+        const player = songfest.players.find((entry) => entry.name == name) 
+        // check if the player exists
+        if (!player) {
+            return
+        }
+        // check if the player already has a registered socket
+        if (player.socketId != null) {
+            return
+        }
+        // set the player's socket to the requesting socket and set them to be taken
+        player.socketId = socket.id
+        player.taken = true
+        // update clients on the change
+        io.emit("updateState", songfest.toClientState())
+    })
+    socket.on("deregisterSocketFromPlayer", (name: string) => {
+        // get the player corresponding to the playerName
+        const player = songfest.players.find((entry) => entry.name == name) 
+        // check if the player exists
+        if (!player) {
+            return
+        }
+        // set the player's socket to null
+        player.socketId = null
+        player.taken = false
+        // update clients on the change
+        io.emit("updateState", songfest.toClientState())
+    })
+    socket.on("disconnect", () => {
+        // if there's no game active, you don't need to do anything
+        if (!songfest.gameInProgress) {
+            return
+        }
+        // on disconnect, remove socket from the player who disconnected
+        const player = songfest.players.find((entry) => entry.socketId == socket.id)
+        if (player) {
+            player.socketId = null
+            player.taken = false
+        }
+    })
+    socket.on("isThisMySong", () => {
+        // find the player corresponding to the socketId
+        const player = songfest.players.find((entry) => entry.socketId == socket.id)
+        // check if the player exists
+        if (!player) {
+            return
+        }
+        // tell client if the current song submitter matches this player
+        socket.emit("isThisYourSong", songfest.currentSongSubmitter.name == player.name)
+    })
+    socket.on("rateSong", (score: { 
+        liked: Score; 
+        theme: Score; 
+    }) => {
+        // check if the player who scored exists
+        const player = songfest.players.find((entry) => entry.socketId == socket.id)
+        if (!player) {
+            return
+        }
+        // check if the player who scored has already scored
+        if (songfest.playersLockedIn.includes(player.name)) {
+            return
+        }
+        // lock the player in
+        songfest.playersLockedIn.push(player.name)
+
+        // give score to the song and the song's submitter
+        songfest.currentSong.addToLikedScore(score.liked)
+        songfest.currentSong.addToThemeScore(score.theme)
+        songfest.currentSongSubmitter.addToLikedScore(score.liked)
+        songfest.currentSongSubmitter.addToThemeScore(score.theme)
+
+        // if everyone has scored, go to next phase
+        if (songfest.playersLockedIn.length + 1 == songfest.players.length) {
+            songfest.playersLockedIn = []
+            songfest.nextPhase()
+            io.emit("updateState", songfest.toClientState())
+        }
+    })
+    socket.on("getDistributions", (type: "rating" | "guessing") => {
+        if (type == "rating") {
+            socket.emit("updateDistributions", {
+                theme: songfest.currentSong.themeScore,
+                liked: songfest.currentSong.likedScore
+            })
+        }
+        else if (type == "guessing") {
+            socket.emit("updateDistributions", songfest.currentSong.guessDistribution)
+        }
+    })
+    socket.on("guessSongSubmitter", (guess: {playerName: string, time: number}) => {
+        // check if the player who guessed exists
+        const player = songfest.players.find((entry) => entry.socketId == socket.id)
+        if (!player) {
+            return
+        }
+        // check if the player who guessed has already guessed
+        if (songfest.playersLockedIn.includes(player.name)) {
+            return
+        }
+        // lock the player in
+        songfest.playersLockedIn.push(player.name)
+
+        // if the player guessed correctly, give points
+        if (guess.playerName == songfest.currentSongSubmitter.name) {
+            player.guessScore += 1
+            console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
+        }
+
+        // add to the song's guess distribution
+        if (guess.playerName in songfest.currentSong.guessDistribution) {
+            songfest.currentSong.guessDistribution[guess.playerName] += 1
+        }
+        
+        // if everyone has guessed, go to next phase
+        if (songfest.playersLockedIn.length + 1 == songfest.players.length) {
+            songfest.playersLockedIn = []
+            songfest.nextPhase()
+            io.emit("updateState", songfest.toClientState())
+        }
     })
 }

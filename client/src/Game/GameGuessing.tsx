@@ -1,24 +1,29 @@
 import { useContext, useEffect, useState } from "react"
-import GameContext from "./GameContext"
 import YouTube from "react-youtube"
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react"
+import { StateContext } from "../Context"
+import { socket } from "../Socket"
+import PlayerNameCombobox from "../Components/PlayerNameCombobox"
 
 export default function GameGuessing() {
     const [guess, setGuess] = useState<string | null>(null)
     const [time, setTime] = useState(60000)
-    const [timer, setTimer] = useState<number | null>(null)
     const [phaseOver, setPhaseOver] = useState(false)
-    const [query, setQuery] = useState("")
     const [isMySong, setIsMySong] = useState(false)
 
-    const gameState = useContext(GameContext)
+    const state = useContext(StateContext)
 
-    if (!gameState?.state?.currentSong) {
+    // if there is no currentSong, don't render
+    if (!state.currentSong) {
         return
     }
 
-    // on render, start timer
+    if (state?.currentSong) {
+        return
+    }
+
+    // on render, check if the song was submitted by this player and start timer
     useEffect(() => {
+        socket.emit("isThisMySong")
         const timerId = setInterval(() => {
             setTime(time => time - 100)
             if (time <= 0) {
@@ -26,14 +31,22 @@ export default function GameGuessing() {
                 clearInterval(timerId)
             }
         }, 100)
-        setTimer(timerId)
-        setIsMySong(gameState.myPlayer?.name == gameState.state?.currentSongSubmitter.name)
+
+        return () => {
+            clearInterval(timerId)
+        }
     }, [])
+    useEffect(() => {
+        socket.on("isThisYourSong", setIsMySong)
+        return () => {
+            socket.off("isThisYourSong", setIsMySong)
+        }
+    }, [socket])
 
     if (phaseOver) {
         return (
             <div>
-                You have submitted your guess {(time/1000).toString()}
+                You have submitted your guess
             </div>
         )
     }
@@ -41,36 +54,22 @@ export default function GameGuessing() {
     return (
         <>
             <div>
-                Guess who submitted the song
+                Guess who submitted the song {(time/1000).toString()}
             </div>
 
             <YouTube
             className={"youtube"}
-            videoId={gameState?.state?.currentSong.videoId}
+            videoId={state?.currentSong?.videoId}
             opts={{
                 playerVars: {
-                    start: gameState?.state?.currentSong.startSeconds,
-                    end: gameState?.state?.currentSong.endSeconds,
+                    start: state?.currentSong.startSeconds,
+                    end: state?.currentSong.endSeconds,
                     autoplay: 1,
                 }
             }}
             />
 
-            <Combobox value={guess} onChange={setGuess} immediate>
-                <ComboboxInput onChange={(event) => setQuery(event.target.value)}/>
-                <ComboboxOptions anchor="bottom start" className=" group border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible [--anchor-max-height:80px] hover:text-white">
-                    {// filter the list of players using the query
-                    gameState?.state?.players.filter((person) => {
-                        return (person.name != gameState.myPlayer?.name) && (person.name.toLowerCase().includes(query.toLowerCase()))
-                    })
-                    // for every player remaining, create an option for them in the combobox
-                    .map((person, index) => (
-                        <ComboboxOption value={person.name} key={index} className="bg-[#A6B5EA] hover:bg-[#6f71b2]">
-                            {person.name}
-                        </ComboboxOption>
-                    ))}
-                </ComboboxOptions>
-            </Combobox>
+            <PlayerNameCombobox onChange={setGuess}/>
 
             <div>
                 <button
@@ -78,7 +77,11 @@ export default function GameGuessing() {
                 disabled={isMySong}
                 onClick={() => {
                     if (guess != null) {
-                        gameState?.emitFunctions.guessSongSubmitter({
+                        // state?.emitFunctions.guessSongSubmitter({
+                        //     playerName: guess,
+                        //     time: time
+                        // })
+                        socket.emit("guessSongSubmitter", {
                             playerName: guess,
                             time: time
                         })

@@ -1,7 +1,7 @@
 import Player from "../classes/Player"
 import Song from "../classes/Song"
 
-export default interface State {
+export default interface ClientState {
     // app
     gameInProgress: boolean
     // songfest

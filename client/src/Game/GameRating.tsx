@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react"
 import YouTube from "react-youtube"
-import GameContext from "./GameContext"
 import { Score, Song } from "../../../common"
+import { StateContext } from "../Context"
+import { socket } from "../Socket"
 
 export default function GameRating() {
     const [likedScore, setLikedScore] = useState<Score| null>(null)
@@ -11,16 +12,23 @@ export default function GameRating() {
     const [phaseOver, setPhaseOver] = useState(false)
     const [isMySong, setIsMySong] = useState(false)
 
-    const gameState = useContext(GameContext)
+    const state = useContext(StateContext)
 
-    if (!gameState?.state?.currentSong) {
+    // if there is no currentSong, don't render
+    if (!state.currentSong) {
         return
     }
     
     // on render, check if the song was submitted by this player
     useEffect(() => {
-        setIsMySong(gameState.myPlayer?.name == gameState.state?.currentSongSubmitter.name)
+        socket.emit("isThisMySong")
     }, [])
+    useEffect(() => {
+        socket.on("isThisYourSong", setIsMySong)
+        return () => {
+            socket.off("isThisYourSong", setIsMySong)
+        }
+    }, [socket])
 
     if (phaseOver) {
         return (
@@ -37,11 +45,11 @@ export default function GameRating() {
 
             <YouTube
             className={"youtube"}
-            videoId={gameState?.state?.currentSong.videoId}
+            videoId={state.currentSong.videoId}
             opts={{
                 playerVars: {
-                    start: gameState?.state?.currentSong.startSeconds,
-                    end: gameState?.state?.currentSong.endSeconds,
+                    start: state.currentSong.startSeconds,
+                    end: state.currentSong.endSeconds,
                     autoplay: 1,
                 }
             }}
@@ -119,10 +127,10 @@ export default function GameRating() {
 
             <button
             type="button"
-            disabled={gameState?.myPlayer?.name == gameState?.state?.currentSong.submitterName}
+            disabled={isMySong || !likedScore || !themeScore}
             onClick={() => {
                 if (likedScore && themeScore) {
-                    gameState?.emitFunctions.rateSong({
+                    socket.emit("rateSong", {
                         liked: likedScore,
                         theme: themeScore
                     })

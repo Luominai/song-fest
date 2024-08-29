@@ -1,19 +1,26 @@
 import { useContext } from "react"
-import GameContext from "./GameContext"
+import { StateContext } from "../Context"
+import { socket } from "../Socket"
 
 export default function GamePlayerSelect() {
-    const gameState = useContext(GameContext);
+    const state = useContext(StateContext)
 
     return (
         <>
             <h3>Select Your Name</h3>
             <form className="playerSelect">
-                {gameState?.state?.players.map((player) => {
+                {state.playerNames.map((player) => {
                     return (
                         <button
                         type="button"
                         onClick={() => {
-                            gameState?.emitFunctions.registerSocketToPlayer(player.name)
+                            // toggle select name
+                            if (player.name == state.myPlayer?.name) {
+                                socket.emit("deregisterSocketFromPlayer", player.name)
+                            }
+                            else {
+                                socket.emit("registerSocketToPlayer", player.name)
+                            }
                         }}
                         disabled={player.taken}
                         >
@@ -25,10 +32,10 @@ export default function GamePlayerSelect() {
             <button
             style={{marginTop: 100}}
             type="button"
-            disabled={gameState?.myPlayer == null || gameState?.myPlayer.name != gameState?.state?.host.name}
+            disabled={state.myPlayer == null}
             onClick={() => {
                 // go to the rating phase. The server will check if you are the host and have permission to press this.
-                gameState?.emitFunctions.nextPhase()
+                socket.emit("nextPhase")
             }}
             >
                 Start

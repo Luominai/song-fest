@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Player, Song } from "../../../common"
 import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table"
-import GameContext from "./GameContext"
 
 const songColumnHelper = createColumnHelper<Song>()
 const songColumns = [

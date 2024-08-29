@@ -58,13 +58,18 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
         <>
             <form className='popup'>
                 {/* The X button on the popup */}
-                <button style={{float: 'right'}} onClick={onClose}>&times;</button>
+                <button style={{float: 'right'}} onClick={() => {
+                    onClose()
+                    dispatch({type: "update", payload: {myPlayer: null}})
+                }}>&times;</button>
                 <br></br> <br></br>
 
-                <PlayerNameCombobox onChange={(value: string) => {
+                <PlayerNameCombobox onChange={(value: string | null) => {
                     setPlayerName(value)
-                    console.log(value)
-                    socket.emit("getPlayerByName", value)
+                    if (value != null) {
+                        console.log(value)
+                        socket.emit("getPlayerByName", value)
+                    }
                 }} enableDynamicOption/>
                 <br></br> <br></br>
 

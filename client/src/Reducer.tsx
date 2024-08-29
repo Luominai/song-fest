@@ -19,24 +19,8 @@ interface UpdateSongTimeAction {
         index: number
     }
 }
-type Action = UpdateAction | UpdateSongUrlAction | UpdateSongTimeAction
-// function updateTime(index: number, type: "start"|"end", timestamp: string) {
-    //     let copy = [...songData]
-    //     const seconds = timeStampToSeconds(timestamp)
-    //     if (type == "start") {
-    //         copy[index].startTimeInput = timestamp
-    //         if (seconds >= 0) {
-    //             copy[index].startSeconds = seconds
-    //         }
-    //     }
-    //     else if (type == "end") {
-    //         copy[index].endTimeInput = timestamp
-    //         if (seconds >= 0) {
-    //             copy[index].endSeconds = seconds
-    //         }
-    //     }
-    //     setSongData(copy)
-    // }
+type Action = UpdateAction | UpdateSongUrlAction | UpdateSongTimeAction 
+
 function tasksReducer(state: ClientState, action: Action) {
     switch(action.type) {
         case "update":

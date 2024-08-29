@@ -1,13 +1,22 @@
-import { useContext } from "react"
-import GameContext from "./GameContext"
+import { useEffect, useState } from "react"
+import { socket } from "../Socket"
+import { Score } from "../../../common"
 
 export default function GameRatingReview() {
-    const gameState = useContext(GameContext)
-    const currentSong = gameState?.state?.currentSong
-    const themeDistribution = currentSong?.themeScore
-    const likedDistribution = currentSong?.likedScore
+    const [distributions, setDistributions] = useState<{liked: Score, theme: Score} | null>(null)
 
-    if (!themeDistribution || !likedDistribution) {
+    // on render, fetch the score distribution from the server
+    useEffect(() => {
+        socket.emit("getDistributions", "rating")
+    }, [])
+    useEffect(() => {
+        socket.on("updateDistributions", setDistributions)
+        return () => {
+            socket.off("updateDistributions", setDistributions)
+        }
+    }, [socket])
+
+    if (!distributions) {
         return
     }
 
@@ -15,31 +24,31 @@ export default function GameRatingReview() {
         <>
             <h3>Rating Summary</h3>
             <div style={{height: 200, width:400, display: "flex"}}>
-                <span style={{width:"33.33%", height: `${themeDistribution.low / themeDistribution.total * 100}%`, backgroundColor: "red"}}>
+                <span style={{width:"33.33%", height: `${distributions.theme.low / distributions.theme.total * 100}%`, backgroundColor: "red"}}>
                     low
                 </span>
-                <span style={{width:"33.33%", height: `${themeDistribution.mid / themeDistribution.total * 100}%`, backgroundColor: "yellow"}}>
+                <span style={{width:"33.33%", height: `${distributions.theme.mid / distributions.theme.total * 100}%`, backgroundColor: "yellow"}}>
                     mid
                 </span>
-                <span style={{width:"33.33%", height: `${themeDistribution.high / themeDistribution.total * 100}%`, backgroundColor: "green"}}>
+                <span style={{width:"33.33%", height: `${distributions.theme.high / distributions.theme.total * 100}%`, backgroundColor: "green"}}>
                     high
                 </span>
             </div>
             <div style={{height: 200, width:400, display: "flex"}}>
-                <span style={{width:"33.33%", height: `${likedDistribution.low / likedDistribution.total * 100}%`, backgroundColor: "red"}}>
+                <span style={{width:"33.33%", height: `${distributions.liked.low / distributions.liked.total * 100}%`, backgroundColor: "red"}}>
                     low
                 </span>
-                <span style={{width:"33.33%", height: `${likedDistribution.mid / likedDistribution.total * 100}%`, backgroundColor: "yellow"}}>
+                <span style={{width:"33.33%", height: `${distributions.liked.mid / distributions.liked.total * 100}%`, backgroundColor: "yellow"}}>
                     mid
                 </span>
-                <span style={{width:"33.33%", height: `${likedDistribution.high / likedDistribution.total * 100}%`, backgroundColor: "green"}}>
+                <span style={{width:"33.33%", height: `${distributions.liked.high / distributions.liked.total * 100}%`, backgroundColor: "green"}}>
                     high
                 </span>
             </div>
             <button
             type="button"
             onClick={() => {
-                gameState?.emitFunctions.nextPhase()
+                socket.emit("nextPhase")
             }}
             >
                 next
