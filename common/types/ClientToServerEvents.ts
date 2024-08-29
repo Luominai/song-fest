@@ -28,4 +28,5 @@ export default interface ClientToServerEvents {
 
     isThisMySong: () => void
     getDistributions: (ratingOrGuessing: "rating" | "guessing") => void
+    getGameSummaryData: () => void
 }

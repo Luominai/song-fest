@@ -179,4 +179,10 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
             io.emit("updateState", songfest.toClientState())
         }
     })
+    socket.on("getGameSummaryData", () => {
+        socket.emit("updateGameSummaryData", {
+            songs: songfest.songs,
+            players: songfest.players
+        })
+    })
 }

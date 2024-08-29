@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Player, Song } from "../../../common"
-import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table"
+import { socket } from "../Socket"
 
 const songColumnHelper = createColumnHelper<Song>()
 const songColumns = [
@@ -51,7 +52,8 @@ const playerColumns = [
 ]
 
 export default function GameSummary() {
-    const gameStatus = useContext(GameContext)
+    const gameSummaryData = useRef<{songs: Song[], players: Player[]} | null>(null)
+
     const [data, setData] = useState<any[]>([])
     const [columns, setColumns] = useState<any[]>([])
     const [mode, setMode] = useState("songs")
@@ -63,16 +65,31 @@ export default function GameSummary() {
         getSortedRowModel: getSortedRowModel()
     })
 
+    // on render, fetch the song and player data from server
     useEffect(() => {
-        if (!gameStatus?.state) {
+        socket.emit("getGameSummaryData")
+    }, [])
+    useEffect(() => {
+        function setGameSummaryData(data: {songs: Song[],players: Player[]}) {
+            gameSummaryData.current = data
+        }
+        socket.on("updateGameSummaryData", setGameSummaryData)
+        return () => {
+            socket.off("updateGameSummaryData", setGameSummaryData)
+        }
+    }, [socket])
+
+    // when the tab changes, update the columns used
+    useEffect(() => {
+        if (!gameSummaryData.current) {
             return
         }
         if (mode == "songs") {
-            setData(gameStatus?.state?.songs)
+            setData(gameSummaryData.current?.songs)
             setColumns(songColumns)
         }
         else if (mode == "players") {
-            setData(gameStatus?.state?.players)
+            setData(gameSummaryData.current.players)
             setColumns(playerColumns)
         }
     }, [mode])
@@ -93,6 +110,7 @@ export default function GameSummary() {
             </button>
             <div>
                 <table>
+                    {/* Table Headers */}
                     <thead>
                         {table.getHeaderGroups().map((headerGroup) => 
                             <tr key={headerGroup.id}>
@@ -107,6 +125,7 @@ export default function GameSummary() {
                             </tr>
                         )}
                     </thead>
+                    {/* Table Cells */}
                     <tbody>
                         {table.getRowModel().rows.map((row) => 
                             <tr key={row.id}>
