@@ -70,12 +70,10 @@ export default class Songfest {
         if (!this.songs[this.currentSongIndex + 1]) {
             return false
         }
-        const nextSongIndex = this.currentSongIndex + 1
-        const nextSong = this.songs[nextSongIndex]
-        console.log(`switching to song ${nextSongIndex + 1}/${this.songs.length}: ${nextSong.title} from ${nextSong.submitterName}`)
-        this.currentSongIndex = nextSongIndex
-        this.currentSong = nextSong
-        this.currentSongSubmitter = this.players.find((entry) => entry.name == nextSong.submitterName)
+        this.currentSongIndex = this.currentSongIndex + 1
+        this.currentSong = this.songs[this.currentSongIndex]
+        this.currentSongSubmitter = this.players.find((entry) => entry.name == this.currentSong.submitterName)
+        console.log(`switching to song ${this.currentSongIndex + 1}/${this.songs.length}: ${this.currentSong.title} from ${this.currentSong.submitterName}`)
         return true
     }
 
