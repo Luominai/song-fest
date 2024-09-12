@@ -17,7 +17,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
     const [endTimeInput, setEndTimeInput] = useState(Array(state.songsPerPerson).fill("00:15.00"))
     const [submitButtonLabel, setSubmitButtonLabel] = useState("Submit")
 
-    const timerId = useRef<number | null>(null)
+    const timerId = useRef<any>(null)
     const time = useRef<number>(0)
 
     useEffect(() => {
@@ -58,7 +58,9 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
         <>
             <form className='popup'>
                 {/* The X button on the popup */}
-                <button style={{float: 'right'}} onClick={() => {
+                <button style={{float: 'right'}} 
+                className="closeSubmissionModal"
+                onClick={() => {
                     onClose()
                     dispatch({type: "update", payload: {myPlayer: null}})
                 }}>&times;</button>
@@ -81,6 +83,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
                             <input type="text" 
                             id={"song" + (index + 1)}
+                            className={"url" + (index + 1)}
                             // fill the input with the url of the song, if the user has previously submitted 
                             value={state.myPlayer?.songs[index]?.url ?? ""}
                             // when a change is made to the input, the songs state is updated accordingly
@@ -92,6 +95,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             type="text"
                             style={{display: "inline", width: "30%", marginRight: "1px", textAlign: "center"}} 
                             value={startTimeInput}
+                            className={"startTime" + (index + 1)}
                             onChange={(event) => {
                                 //@ts-ignore
                                 setStartTimeInput((input) => input.with(index, event.target.value))
@@ -103,6 +107,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             <input 
                             type="text"
                             style={{display: "inline", width: "30%", marginLeft: "1px", textAlign: "center"}} 
+                            className={"endTime" + (index + 1)}
                             value={endTimeInput}
                             onChange={(event) => {
                                 //@ts-ignore
@@ -116,7 +121,10 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                 <br></br>
 
                 <center>
-                    <button type="button" onClick={() => {
+                    <button 
+                    className="submitSongs"
+                    type="button" 
+                    onClick={() => {
                         if (!state.myPlayer) {
                             return
                         }

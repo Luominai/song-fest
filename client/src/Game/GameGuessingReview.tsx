@@ -32,6 +32,7 @@ export default function GameGuessingReview() {
                 })}
             </div>
             <button
+            className="nextPhase"
             type="button"
             onClick={() => {
                 // gameState?.emitFunctions.nextPhase()

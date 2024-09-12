@@ -17,7 +17,9 @@ function SongfestClosed() {
             <div>
                 <img src={ShitfestLogo} className='logo'></img>
             </div>
-            <button onClick={() => {
+            <button 
+            className="openCreationModal"
+            onClick={() => {
                 setShowModal(true)
             }}>
                 Let the Shitfest begin

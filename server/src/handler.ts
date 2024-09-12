@@ -27,7 +27,8 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
     })
     socket.on("startGame", () => {
         songfest.startGame()
-        io.emit("startGame")
+        // io.emit("startGame")
+        io.emit("updateState", songfest.toClientState())
     })
     socket.on("getPlayerByName", (name: string) => {
         let player = songfest.players.find((entry) => entry.name == name)
@@ -52,10 +53,6 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
             socket.emit("endProcessingSongs")
         })
     })
-    socket.on("startGame", () => {
-        songfest.startGame()
-        io.emit("updateState", songfest.toClientState())
-    })
     socket.on("registerSocketToPlayer", (name: string) => {
         // get the player corresponding to the playerName
         const player = songfest.players.find((entry) => entry.name == name) 
@@ -70,7 +67,9 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         // set the player's socket to the requesting socket and set them to be taken
         player.socketId = socket.id
         player.taken = true
-        // update clients on the change
+        // tell the client who their assigned player is
+        socket.emit("updateState", {myPlayer: player})
+        // update all other clients on the change
         io.emit("updateState", songfest.toClientState())
     })
     socket.on("deregisterSocketFromPlayer", (name: string) => {
@@ -133,6 +132,7 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         // if everyone has scored, go to next phase
         if (songfest.playersLockedIn.length + 1 == songfest.players.length) {
             songfest.playersLockedIn = []
+            console.log("everyone has submitted their ratings")
             songfest.nextPhase()
             io.emit("updateState", songfest.toClientState())
         }
@@ -175,6 +175,7 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         // if everyone has guessed, go to next phase
         if (songfest.playersLockedIn.length + 1 == songfest.players.length) {
             songfest.playersLockedIn = []
+            console.log("everyone has submitted a guess")
             songfest.nextPhase()
             io.emit("updateState", songfest.toClientState())
         }
@@ -184,5 +185,13 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
             songs: songfest.songs,
             players: songfest.players
         })
+    })
+    socket.on("reset", () => {
+        songfest.reset()
+        io.emit("updateState", songfest.toClientState())
+    })
+    socket.on("nextPhase", () => {
+        songfest.nextPhase()
+        socket.emit("updateState", songfest.toClientState())
     })
 }

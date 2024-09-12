@@ -32,6 +32,7 @@ export default function GamePlayerSelect() {
             <button
             style={{marginTop: 100}}
             type="button"
+            className="nextPhase"
             disabled={state.myPlayer == null}
             onClick={() => {
                 // go to the rating phase. The server will check if you are the host and have permission to press this.

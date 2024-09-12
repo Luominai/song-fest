@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
 
     // registerSongfestHandler(socket, songfest, io)
     // registerGameHandler(socket, game, io)
-    registerHandler(socket, songfest, io)
+    registerHandler(socket, songfest, io) 
 
 })
 

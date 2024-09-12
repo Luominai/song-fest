@@ -46,6 +46,7 @@ export default function GameRatingReview() {
                 </span>
             </div>
             <button
+            className="nextPhase"
             type="button"
             onClick={() => {
                 socket.emit("nextPhase")

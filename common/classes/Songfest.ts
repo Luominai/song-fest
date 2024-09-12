@@ -25,6 +25,7 @@ export default class Songfest {
     }
 
     startGame() {
+        console.log("setting up game")
         this.songs = this.players.map((player) => player.songs).flat().filter((entry) => entry.initialized)
 
         let guessDistribution = {}
@@ -36,9 +37,9 @@ export default class Songfest {
         })
         
         this.shuffleSongs()
-        this.currentSong = this.songs[0]
         this.currentSongIndex = -1
-        this.currentSongSubmitter = this.players.find((entry) => entry.name == this.currentSong.submitterName)
+        // set the first song
+        this.nextSong()
         this.phase = -1
         this.playersLockedIn = []
         this.gameInProgress = true
@@ -50,20 +51,24 @@ export default class Songfest {
     }
 
     nextPhase() {
-        // if we've gone through every song, switch to the end phase
-        if (this.currentSongIndex + 1 == this.songs.length) {
-            console.log("game is over")
-            this.phase = 4
+        // if we are on phase 3 (end of a cycle), check if there is a next song. If not end the game
+        if (this.phase == 3) {
+            if (!this.nextSong()) {
+                console.log("game is over")
+                this.phase = 4
+                // return so you don't change phase
+                return 
+            }
         }
-        // otherwise, go through the regular cycle
-        else {
-            this.phase = (this.phase + 1) % 4
-        }
+        // move to the next phase
+        this.phase = (this.phase + 1) % 4
+        console.log("now on phase", this.phase)
     }
 
     nextSong() {
-        if (this.currentSongIndex >= this.songs.length) {
-            return
+        // check if there is a next song
+        if (!this.songs[this.currentSongIndex + 1]) {
+            return false
         }
         const nextSongIndex = this.currentSongIndex + 1
         const nextSong = this.songs[nextSongIndex]
@@ -71,6 +76,7 @@ export default class Songfest {
         this.currentSongIndex = nextSongIndex
         this.currentSong = nextSong
         this.currentSongSubmitter = this.players.find((entry) => entry.name == nextSong.submitterName)
+        return true
     }
 
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -106,5 +112,22 @@ export default class Songfest {
             })
         }
         return clientState
+    }
+
+    reset() {
+        // songfest
+        this.gameInProgress = false
+        this.songfestOpen = false
+        this.players = []
+        this.songsPerPerson = undefined
+        this.theme =undefined
+        this.host = undefined
+        // game
+        this.songs = undefined
+        this.currentSong = undefined
+        this.currentSongSubmitter = undefined
+        this.currentSongIndex = undefined
+        this.phase = undefined
+        this.playersLockedIn = undefined
     }
 }

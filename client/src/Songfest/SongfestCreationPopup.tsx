@@ -19,27 +19,27 @@ function SongfestCreationPopup( {closeModal}: {closeModal: any} ) {
                 <br></br> <br></br>
                 
                 <label htmlFor="theme">Theme: </label>
-                <input type="text" id="theme" required
+                <input type="text" id="theme" className="theme" required
                 onChange={(event) => {
                     setTheme(event.target.value)
                 }}
                 /> <br></br> <br></br>
 
                 <label htmlFor="host">Host: </label>
-                <input type="text" id="host" required
+                <input type="text" id="host" className="host" required
                 onChange={(event) => {
                     setHost(event.target.value)
                 }}/><br></br> <br></br>
 
-                <label htmlFor="songs per person">Songs per person: </label>
-                <input type="number" id="songs per person" required
+                <label htmlFor="songsPerPerson">Songs per person: </label>
+                <input type="number" id="songsPerPerson" className="songsPerPerson" required
                 onChange={(event) => {
                     setSongsPerPerson(parseInt(event.target.value))
                 }}
                 /> <br></br> <br></br>
 
                 <center>
-                <button type="button" className='button' onClick={() => {
+                <button type="button" className='startSongfest' onClick={() => {
                     socket.emit("startSongfest", {
                         "songsPerPerson": songsPerPerson,
                         "theme": theme,

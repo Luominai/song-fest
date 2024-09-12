@@ -8,7 +8,7 @@ export default function GameRating() {
     const [likedScore, setLikedScore] = useState<Score| null>(null)
     const [themeScore, setThemeScore] = useState<Score| null>(null)
     const [time, setTime] = useState(60000)
-    const [timer, setTimer] = useState<number | null>(null)
+    const [timer, setTimer] = useState<any>(null)
     const [phaseOver, setPhaseOver] = useState(false)
     const [isMySong, setIsMySong] = useState(false)
 
@@ -70,6 +70,7 @@ export default function GameRating() {
                     How much do you like it?
                 </h3>
                 <button 
+                className="likedLow"
                 type="button"
                 onClick={() => {
                     setLikedScore({low: 1, mid: 0, high: 0, total: 1})
@@ -78,6 +79,7 @@ export default function GameRating() {
                     low
                 </button>
                 <button
+                className="likedMid"
                 type="button"
                 onClick={() => {
                     setLikedScore({low: 0, mid: 1, high: 0, total: 1})
@@ -86,6 +88,7 @@ export default function GameRating() {
                     mid
                 </button>
                 <button
+                className="likedHigh"
                 type="button"
                 onClick={() => {
                     setLikedScore({low: 0, mid: 0, high: 1, total: 1})
@@ -100,6 +103,7 @@ export default function GameRating() {
                     How much does it fit the theme?
                 </h3>
                 <button 
+                className="themeLow"
                 type="button"
                 onClick={() => {
                     setThemeScore({low: 1, mid: 0, high: 0, total: 1})
@@ -108,6 +112,7 @@ export default function GameRating() {
                     low
                 </button>
                 <button
+                className="themeMid"
                 type="button"
                 onClick={() => {
                     setThemeScore({low: 0, mid: 1, high: 0, total: 1})
@@ -116,6 +121,7 @@ export default function GameRating() {
                     mid
                 </button>
                 <button
+                className="themeHigh"
                 type="button"
                 onClick={() => {
                     setThemeScore({low: 0, mid: 0, high: 1, total: 1})
@@ -126,6 +132,7 @@ export default function GameRating() {
             </div>
 
             <button
+            className="rateSong"
             type="button"
             disabled={isMySong || !likedScore || !themeScore}
             onClick={() => {

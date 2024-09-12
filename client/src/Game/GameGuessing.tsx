@@ -73,6 +73,7 @@ export default function GameGuessing() {
 
             <div>
                 <button
+                className="guessSongSubmitter"
                 type="button"
                 disabled={isMySong}
                 onClick={() => {

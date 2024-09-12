@@ -23,7 +23,9 @@ function SongfestOpen() {
                 <p>Theme: {state.theme}</p>
 
             <br></br>
-                <button onClick={() => {setShowModal(true)}}>
+                <button 
+                className="openSubmissionModal"
+                onClick={() => {setShowModal(true)}}>
                     Submit Songs
                 </button>
                 {showModal && createPortal(
@@ -34,7 +36,9 @@ function SongfestOpen() {
 
             <br></br>
             <div>
-                <button onClick={() => {
+                <button 
+                className="startGame"
+                onClick={() => {
                     socket.emit("startGame")
                 }}>
                     Start Shitfest
