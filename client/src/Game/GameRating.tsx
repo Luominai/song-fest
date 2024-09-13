@@ -7,7 +7,7 @@ import { socket } from "../Socket"
 export default function GameRating() {
     const [likedScore, setLikedScore] = useState<Score| null>(null)
     const [themeScore, setThemeScore] = useState<Score| null>(null)
-    const [time, setTime] = useState(60000)
+    const [time, setTime] = useState(5000)
     const [timer, setTimer] = useState<any>(null)
     const [phaseOver, setPhaseOver] = useState(false)
     const [isMySong, setIsMySong] = useState(false)
@@ -29,6 +29,21 @@ export default function GameRating() {
             socket.off("isThisYourSong", setIsMySong)
         }
     }, [socket])
+    useEffect(() => {
+        if (time <= 0) {
+            setPhaseOver(true)
+            clearInterval(timer)
+            setPhaseOver(true)
+            socket.emit("rateSong", {
+                liked: {low: 0, mid: 0, high: 0, total: 0},
+                theme: {low: 0, mid: 0, high: 0, total: 0}
+            })
+            if (timer != null) {
+                clearInterval(timer)
+            }
+            
+        }
+    })
 
     if (phaseOver) {
         return (
@@ -56,10 +71,6 @@ export default function GameRating() {
             onPlay={() => {
                 const timerId = setInterval(() => {
                     setTime(time => time - 100)
-                    if (time <= 0) {
-                        setPhaseOver(true)
-                        clearInterval(timerId)
-                    }
                 }, 100)
                 setTimer(timerId)
             }}
