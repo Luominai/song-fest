@@ -1,0 +1,19 @@
+.bar {
+    border-radius: 10px 10px 0 0;
+    transition: height 0.5s;
+}
+
+.bar-container {
+    height: 100px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.bar:hover {
+    height: 100%;   
+}
+
+.number {
+    text-align: center;
+}
+  
