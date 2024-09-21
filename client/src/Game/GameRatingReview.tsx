@@ -3,8 +3,8 @@ import { socket } from "../Socket"
 import { Score } from "../../../common"
 import "../css/ratingReview.css"
 
-export default function GameRatingReview() {
-    const [distributions, setDistributions] = useState<{liked: Score, theme: Score} | null>(null)
+export default function GameRatingReview({mock}: {mock?: {liked: Score, theme: Score}}) {
+    const [distributions, setDistributions] = useState<{liked: Score, theme: Score} | null>(mock??null)
 
     // on render, fetch the score distribution from the server
     useEffect(() => {

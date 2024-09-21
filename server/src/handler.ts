@@ -155,7 +155,7 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
 
         // if the player guessed correctly, give points
         player.guessSong(songfest.currentSong, songfest.currentSongSubmitter, guess)
-        console.log(`${this.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
+        console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
         
         // if everyone has guessed, go to next phase
         if (songfest.playersLockedIn.length + 1 == songfest.players.length) {

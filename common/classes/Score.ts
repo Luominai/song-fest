@@ -4,11 +4,11 @@ export default class Score {
     high: number
     total: number
     
-    constructor() {
-        this.low = 0
-        this.mid = 0
-        this.high = 0
-        this.total = 0
+    constructor(low?: number, mid?: number, high?: number) {
+        this.low = low ?? 0
+        this.mid = mid ?? 0
+        this.high = high ?? 0
+        this.total = this.low + this.mid + this.high
     }
 
     add(score: Score | Omit<Score, "total">) {
