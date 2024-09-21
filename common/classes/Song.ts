@@ -1,4 +1,4 @@
-import Score from "../types/Score"
+import Score from "../classes/Score"
 import axios from "axios"
 import getYoutubeId from "get-youtube-id"
 import youtubeApiKey from "../apiKey"
@@ -36,18 +36,8 @@ export default class Song {
         this.endSeconds = endSeconds
         this.videoId = getYoutubeId(url)
         this.clipId = this.makeid(11)
-        this.themeScore = {
-            low: 0,
-            mid: 0,
-            high: 0,
-            total: 0
-        }
-        this.likedScore = {
-            low: 0,
-            mid: 0,
-            high: 0,
-            total: 0
-        }
+        this.themeScore = new Score()
+        this.likedScore = new Score()
         this.guessDistribution = {}
         this.getSongData()
         this.initialized = true
@@ -85,21 +75,4 @@ export default class Song {
         return result;
     }
 
-    addToThemeScore(value: Score | Omit<Score, "total">) {
-        this.themeScore.low += value.low
-        this.themeScore.mid += value.mid
-        this.themeScore.high += value.high
-        if ("total" in value) {
-            this.themeScore.total += value.total
-        }
-    }
-
-    addToLikedScore(value: Score | Omit<Score, "total">) {
-        this.likedScore.low += value.low
-        this.likedScore.mid += value.mid
-        this.likedScore.high += value.high
-        if ("total" in value) {
-            this.likedScore.total += value.total
-        }
-    }
 }

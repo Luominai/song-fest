@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react"
 import YouTube from "react-youtube"
-import { Score, Song } from "../../../common"
+import { ClientScore } from "../../../common"
 import { StateContext } from "../Context"
 import { socket } from "../Socket"
 
 export default function GameRating() {
-    const [likedScore, setLikedScore] = useState<Score| null>(null)
-    const [themeScore, setThemeScore] = useState<Score| null>(null)
+    const [likedScore, setLikedScore] = useState<ClientScore | null>(null)
+    const [themeScore, setThemeScore] = useState<ClientScore| null>(null)
     const [time, setTime] = useState(5000)
     const [timer, setTimer] = useState<any>(null)
     const [phaseOver, setPhaseOver] = useState(false)

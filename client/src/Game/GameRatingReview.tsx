@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { socket } from "../Socket"
 import { Score } from "../../../common"
+import "../css/ratingReview.css"
 
 export default function GameRatingReview() {
     const [distributions, setDistributions] = useState<{liked: Score, theme: Score} | null>(null)
@@ -23,28 +24,16 @@ export default function GameRatingReview() {
     return (
         <>
             <h3>Rating Summary</h3>
-            <div style={{height: 200, width:400, display: "flex"}}>
-                <span style={{width:"33.33%", height: `${distributions.theme.low / distributions.theme.total * 100}%`, backgroundColor: "red"}}>
-                    low
-                </span>
-                <span style={{width:"33.33%", height: `${distributions.theme.mid / distributions.theme.total * 100}%`, backgroundColor: "yellow"}}>
-                    mid
-                </span>
-                <span style={{width:"33.33%", height: `${distributions.theme.high / distributions.theme.total * 100}%`, backgroundColor: "green"}}>
-                    high
-                </span>
-            </div>
-            <div style={{height: 200, width:400, display: "flex"}}>
-                <span style={{width:"33.33%", height: `${distributions.liked.low / distributions.liked.total * 100}%`, backgroundColor: "red"}}>
-                    low
-                </span>
-                <span style={{width:"33.33%", height: `${distributions.liked.mid / distributions.liked.total * 100}%`, backgroundColor: "yellow"}}>
-                    mid
-                </span>
-                <span style={{width:"33.33%", height: `${distributions.liked.high / distributions.liked.total * 100}%`, backgroundColor: "green"}}>
-                    high
-                </span>
-            </div>
+            
+            <Bar heightPercent={distributions.liked.low / distributions.liked.total} color="red"/>
+            <Bar heightPercent={distributions.theme.low / distributions.theme.total} color="red"/>
+
+            <Bar heightPercent={distributions.liked.mid / distributions.liked.total} color="yellow"/>
+            <Bar heightPercent={distributions.theme.mid / distributions.theme.total} color="ywllow"/>
+
+            <Bar heightPercent={distributions.liked.high / distributions.liked.total} color="green"/>
+            <Bar heightPercent={distributions.theme.high / distributions.theme.total} color="green"/>
+            
             <button
             className="nextPhase"
             type="button"
@@ -54,6 +43,32 @@ export default function GameRatingReview() {
             >
                 next
             </button>
+        </>
+    )
+}
+
+function Bar({label = "", heightPercent, color}: {label?: string, heightPercent: number, color: string}) {
+    const [style, setStyle] = useState({
+        height: "5%", 
+        backgroundColor: color
+    })
+
+    useEffect(() => {
+        setStyle({...style, height: `${5 + (95 * heightPercent)}%`} )
+    })
+
+    return (
+        <>
+            <div className="bar-container">
+                <div className="bar" style={style}>
+                {/* <div className="number">{number}</div> */}
+                
+                </div>
+            </div>
+        
+            <div className="label">
+                {label}
+            </div>
         </>
     )
 }

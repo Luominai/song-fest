@@ -1,5 +1,5 @@
 import Song from "./Song"
-import Score from "../types/Score"
+import Score from "../classes/Score"
 
 export default class Player {
     name: string
@@ -14,37 +14,27 @@ export default class Player {
         this.name = name
         this.socketId = null
         this.taken = false
-        this.likedScore = {
-            "low": 0,
-            "mid": 0,
-            "high": 0,
-            "total": 0
-        }
-        this.themeScore = {
-            "low": 0,
-            "mid": 0,
-            "high": 0,
-            "total": 0
-        }
+        this.likedScore = new Score
+        this.themeScore = new Score
         this.guessScore = 0
         this.songs = Array(numberOfSongs).fill(new Song(name))
     }
 
-    addToThemeScore(value: Score | Omit<Score, "total">) {
-        this.themeScore.low += value.low
-        this.themeScore.mid += value.mid
-        this.themeScore.high += value.high
-        if ("total" in value) {
-            this.themeScore.total += value.total
-        }
+    rateSong(song: Song, songSubmitter: Player, score: { liked: Score; theme: Score; }) {
+        // give score to the song and the song's submitter
+        song.likedScore.add(score.liked)
+        song.themeScore.add(score.theme)
+        songSubmitter.likedScore.add(score.liked)
+        songSubmitter.themeScore.add(score.theme)
     }
 
-    addToLikedScore(value: Score | Omit<Score, "total">) {
-        this.likedScore.low += value.low
-        this.likedScore.mid += value.mid
-        this.likedScore.high += value.high
-        if ("total" in value) {
-            this.likedScore.total += value.total
+    guessSong(song: Song, songSubmitter: Player, guess: {playerName: string, time: number}) {
+        // if the player guessed correctly, give points
+        if (guess.playerName == songSubmitter.name) {
+            this.guessScore += 1
+            song.guessDistribution[guess.playerName] += 1
+            return true
         }
+        return false
     }
 }

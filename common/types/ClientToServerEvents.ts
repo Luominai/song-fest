@@ -1,5 +1,5 @@
 import Player from "../classes/Player";
-import Score from "./Score";
+import ClientScore from "./ClientScore";
 
 export default interface ClientToServerEvents {
     getState: () => void
@@ -18,11 +18,10 @@ export default interface ClientToServerEvents {
 
     nextPhase: () => void
 
-    registerSocketToPlayer: (playerName: string) => void
-    deregisterSocketFromPlayer: (playerName: string) => void
+    updateSocket: (playerName: string) => void
     rateSong: (score: {
-        liked: Score
-        theme: Score
+        liked: ClientScore
+        theme: ClientScore
     }) => void
     guessSongSubmitter: (guess: {playerName: string, time: number}) => void
 

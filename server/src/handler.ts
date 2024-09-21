@@ -53,36 +53,32 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
             socket.emit("endProcessingSongs")
         })
     })
-    socket.on("registerSocketToPlayer", (name: string) => {
+    socket.on("updateSocket", (name: string) => {
         // get the player corresponding to the playerName
         const player = songfest.players.find((entry) => entry.name == name) 
         // check if the player exists
         if (!player) {
             return
         }
-        // check if the player already has a registered socket
-        if (player.socketId != null) {
-            return
+        // toggle off
+        if (player.socketId == socket.id) {
+            player.socketId = null
+            player.taken = false
+            socket.emit("updateState", {myPlayer: null})
         }
-        // set the player's socket to the requesting socket and set them to be taken
-        player.socketId = socket.id
-        player.taken = true
-        // tell the client who their assigned player is
-        socket.emit("updateState", {myPlayer: player})
+        // toggle on
+        else {
+            // free up the previous selected name (if there is one)
+            const previous = songfest.players.find((entry) => entry.socketId == socket.id)
+            if (previous) {
+                previous.socketId = null
+                previous.taken = false
+            }
+            player.socketId = socket.id
+            player.taken = true
+            socket.emit("updateState", {myPlayer: player})
+        }
         // update all other clients on the change
-        io.emit("updateState", songfest.toClientState())
-    })
-    socket.on("deregisterSocketFromPlayer", (name: string) => {
-        // get the player corresponding to the playerName
-        const player = songfest.players.find((entry) => entry.name == name) 
-        // check if the player exists
-        if (!player) {
-            return
-        }
-        // set the player's socket to null
-        player.socketId = null
-        player.taken = false
-        // update clients on the change
         io.emit("updateState", songfest.toClientState())
     })
     socket.on("disconnect", () => {
@@ -124,14 +120,10 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         songfest.playersLockedIn.push(player.name)
 
         // give score to the song and the song's submitter
-        songfest.currentSong.addToLikedScore(score.liked)
-        songfest.currentSong.addToThemeScore(score.theme)
-        songfest.currentSongSubmitter.addToLikedScore(score.liked)
-        songfest.currentSongSubmitter.addToThemeScore(score.theme)
+        player.rateSong(songfest.currentSong, songfest.currentSongSubmitter, score)
 
         // if everyone has scored, go to next phase
         if (songfest.playersLockedIn.length + 1 == songfest.players.length) {
-            songfest.playersLockedIn = []
             console.log("everyone has submitted their ratings")
             songfest.nextPhase()
             io.emit("updateState", songfest.toClientState())
@@ -162,19 +154,11 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         songfest.playersLockedIn.push(player.name)
 
         // if the player guessed correctly, give points
-        if (guess.playerName == songfest.currentSongSubmitter.name) {
-            player.guessScore += 1
-            console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
-        }
-
-        // add to the song's guess distribution
-        if (guess.playerName in songfest.currentSong.guessDistribution) {
-            songfest.currentSong.guessDistribution[guess.playerName] += 1
-        }
+        player.guessSong(songfest.currentSong, songfest.currentSongSubmitter, guess)
+        console.log(`${this.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
         
         // if everyone has guessed, go to next phase
         if (songfest.playersLockedIn.length + 1 == songfest.players.length) {
-            songfest.playersLockedIn = []
             console.log("everyone has submitted a guess")
             songfest.nextPhase()
             io.emit("updateState", songfest.toClientState())

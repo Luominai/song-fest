@@ -14,13 +14,7 @@ export default function GamePlayerSelect() {
                         <button
                         type="button"
                         onClick={() => {
-                            // toggle select name
-                            if (player.name == state.myPlayer?.name) {
-                                socket.emit("deregisterSocketFromPlayer", player.name)
-                            }
-                            else {
-                                socket.emit("registerSocketToPlayer", player.name)
-                            }
+                            socket.emit("updateSocket", player.name)
                         }}
                         disabled={player.taken}
                         >

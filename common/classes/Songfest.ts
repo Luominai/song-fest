@@ -45,11 +45,6 @@ export default class Songfest {
         this.gameInProgress = true
     }
 
-    updatePlayerSocket(player: Player, socketId: string) {
-        const index = this.players.findIndex((entry) => entry.name == player.name)
-        this.players[index].socketId = socketId
-    }
-
     nextPhase() {
         // if we are on phase 3 (end of a cycle), check if there is a next song. If not end the game
         if (this.phase == 3) {
@@ -62,6 +57,7 @@ export default class Songfest {
         }
         // move to the next phase
         this.phase = (this.phase + 1) % 4
+        this.playersLockedIn = []
         console.log("now on phase", this.phase)
     }
 
