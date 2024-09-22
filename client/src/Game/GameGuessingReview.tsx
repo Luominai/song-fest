@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react"
 import { socket } from "../Socket"
+import "../css/guessingReview.css"
 
-export default function GameGuessingReview() {
-    const [distributions, setDistributions] = useState<Record<string, number> | null>(null)
+export default function GameGuessingReview({mock}: {mock?: Record<string, number>}) {
+    const [distributions, setDistributions] = useState<Record<string, number> | null>(mock ?? null)
 
     // on render, fetch the score distribution from the server
     useEffect(() => {
-        socket.emit("getDistributions", "guessing")
+        if (!distributions) {
+            socket.emit("getDistributions", "guessing")
+        }
     }, [])
     useEffect(() => {
         socket.on("updateDistributions", setDistributions)
@@ -19,15 +22,20 @@ export default function GameGuessingReview() {
         return
     }
 
+    const totalGuesses = Object.values(distributions).reduce((prev, current) => {
+        return prev + current
+    })
+
     return (
         <>
-            <h3>Guessing Summary</h3>
+            <h3 className="header">Guessing Summary</h3>
             <div style={{height: 600, width:200, overflow: "scroll"}}>
                 {Object.entries(distributions).map(([name, guessCount]) => {
                     return (
-                        <div style={{width: "100%"}}>
-                            {name}: {guessCount}
-                        </div>
+                        <HorizontalBar label={name} count={guessCount} percent={guessCount / totalGuesses}/>
+                        // <div style={{width: "100%"}}>
+                        //     {name}: {guessCount}
+                        // </div>
                     )
                 })}
             </div>
@@ -42,5 +50,38 @@ export default function GameGuessingReview() {
                 next
             </button>
         </>
+    )
+}
+
+function HorizontalBar({label, count, percent}: {label: string, count: number, percent: number}) {
+    const [style, setStyle] = useState({
+        width: "2%", 
+        backgroundColor: `rgba(95,168,255)`,
+        filter: `brightness(${75 + 25*percent}%)`
+    })
+
+    useEffect(() => {
+        setStyle({...style, width: `${2 + (98 * percent)}%`} )
+    })
+
+    return (
+        <div style={{display: "flex"}}>
+            <div className="name-label">
+                {label}
+            </div>
+            <div className="bar-container">
+                <div className="bar" style={style}>
+                {/* <div className="number">{number}</div> */}
+                
+                </div>
+                <div className="number-label">
+                    {count}
+                </div>
+            </div>
+        
+            {/* <div className="label">
+                {label}
+            </div> */}
+        </div>
     )
 }

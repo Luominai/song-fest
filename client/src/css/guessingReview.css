@@ -1,0 +1,37 @@
+.bar {
+    border-radius: 0 20px 20px 0;
+    transition: width 0.5s;
+}
+
+.bars {
+    display: flex;
+}
+
+.bar-container {
+    height: 20px;
+    width: 200px;
+    display: flex;
+    flex-direction: row;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center
+}
+
+.header {
+    text-align: center
+}
+
+.name-label {
+    font-size: 11px;
+    text-align: center;
+    width: 100px;
+    overflow-x: hidden;
+}
+
+.number-label {
+    text-align: center;
+    font-size: 11px;
+}
+

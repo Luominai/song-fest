@@ -1,10 +1,15 @@
 .bar {
-    border-radius: 10px 10px 0 0;
+    border-radius: 20px 20px 0 0;
     transition: height 0.5s;
 }
 
+.bars {
+    display: flex;
+}
+
 .bar-container {
-    height: 100px;
+    height: 200px;
+    width: 40px;
     display: flex;
     flex-direction: column-reverse;
 }
@@ -13,7 +18,17 @@
     height: 100%;   
 }
 
-.number {
+.buttonContainer {
+    display: flex;
+    justify-content: center
+}
+
+.header {
+    text-align: center
+}
+
+.label {
+    font-size: 11px;
     text-align: center;
 }
-  
+

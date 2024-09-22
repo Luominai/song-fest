@@ -132,12 +132,12 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
     socket.on("getDistributions", (type: "rating" | "guessing") => {
         if (type == "rating") {
             socket.emit("updateDistributions", {
-                theme: songfest.currentSong.themeScore,
-                liked: songfest.currentSong.likedScore
+                theme: songfest?.currentSong?.themeScore,
+                liked: songfest?.currentSong?.likedScore
             })
         }
         else if (type == "guessing") {
-            socket.emit("updateDistributions", songfest.currentSong.guessDistribution)
+            socket.emit("updateDistributions", songfest?.currentSong?.guessDistribution)
         }
     })
     socket.on("guessSongSubmitter", (guess: {playerName: string, time: number}) => {
