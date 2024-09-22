@@ -82,6 +82,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                         <div key={"song" + (index + 1)}>
                             <label htmlFor={"song" + (index + 1)}>Song {index + 1}:</label> <br></br>
                             <input type="text" 
+                            autoComplete="off"
                             id={"song" + (index + 1)}
                             className={"url" + (index + 1)}
                             // fill the input with the url of the song, if the user has previously submitted 
@@ -92,6 +93,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                         </div>
                         <div style={{display: "flex", justifyContent: "center", marginTop: "3px"}}>
                             <input 
+                            autoComplete="off"
                             type="text"
                             style={{display: "inline", width: "30%", marginRight: "1px", textAlign: "center"}} 
                             value={startTimeInput}
@@ -105,6 +107,7 @@ function SongfestSubmissionPopup({onClose}: {onClose: any}) {
                             <span style={{margin: "auto 2px"}}> to </span>
 
                             <input 
+                            autoComplete="off"
                             type="text"
                             style={{display: "inline", width: "30%", marginLeft: "1px", textAlign: "center"}} 
                             className={"endTime" + (index + 1)}

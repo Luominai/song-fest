@@ -16,7 +16,7 @@ export default function GamePlayerSelect() {
                         onClick={() => {
                             socket.emit("updateSocket", player.name)
                         }}
-                        disabled={player.taken}
+                        disabled={(player.name != state.myPlayer?.name) && (player.taken || state.myPlayer != null)}
                         >
                             {player.name}
                         </button>

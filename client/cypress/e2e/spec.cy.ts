@@ -36,11 +36,9 @@ function guessSong() {
         if (body.find(".guessSongSubmitter").text() == "Confirm") {
             cy.get(".name").type("wario")
             cy.get(".option1").click()
-            cy.wait(1000)
             cy.get(".guessSongSubmitter").click()
         }
         else {
-            cy.wait(1000)
             socket.emit("guessSongSubmitter", {
                 playerName: "waluigi",
                 time: 50
@@ -59,17 +57,14 @@ function rateSong(likedScore: string, themeScore: string) {
         if (body.find(".rateSong").text() == "Confirm") {
             cy.get(`.liked${likedScore}`).click()
             cy.get(`.theme${themeScore}`).click()
-            cy.wait(1000)
             cy.get(".rateSong").click()
         }
         else {
-            cy.wait(1000)
             socket.emit("rateSong", {
                 liked: {low: 1, mid: 0, high: 0, total: 1},
                 theme: {low: 1, mid: 0, high: 0, total: 1}
             })
         }
-        cy.wait(3000)
     })
 }
 

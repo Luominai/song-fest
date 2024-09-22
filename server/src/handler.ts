@@ -138,6 +138,7 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         }
         else if (type == "guessing") {
             socket.emit("updateDistributions", songfest?.currentSong?.guessDistribution)
+            console.log("guess distribution: ", songfest.currentSong.guessDistribution)
         }
     })
     socket.on("guessSongSubmitter", (guess: {playerName: string, time: number}) => {
@@ -155,7 +156,7 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
 
         // if the player guessed correctly, give points
         player.guessSong(songfest.currentSong, songfest.currentSongSubmitter, guess)
-        console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`)
+        console.log(`${player.name} guessed ${guess.playerName} with ${guess.time / 1000}s remaining`, songfest.currentSong.guessDistribution)
         
         // if everyone has guessed, go to next phase
         if (songfest.playersLockedIn.length + 1 == songfest.players.length) {

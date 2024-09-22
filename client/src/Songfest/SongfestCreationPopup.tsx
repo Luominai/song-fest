@@ -19,21 +19,24 @@ function SongfestCreationPopup( {closeModal}: {closeModal: any} ) {
                 <br></br> <br></br>
                 
                 <label htmlFor="theme">Theme: </label>
-                <input type="text" id="theme" className="theme" required
+                <input type="text" id="theme" className="theme" autoComplete="off" required
                 onChange={(event) => {
+                    event.preventDefault()
                     setTheme(event.target.value)
                 }}
                 /> <br></br> <br></br>
 
                 <label htmlFor="host">Host: </label>
-                <input type="text" id="host" className="host" required
+                <input type="text" id="host" className="host" autoComplete="off" required
                 onChange={(event) => {
+                    event.preventDefault()
                     setHost(event.target.value)
                 }}/><br></br> <br></br>
 
                 <label htmlFor="songsPerPerson">Songs per person: </label>
-                <input type="number" id="songsPerPerson" className="songsPerPerson" required
+                <input type="number" id="songsPerPerson" className="songsPerPerson" autoComplete="off" required
                 onChange={(event) => {
+                    event.preventDefault()
                     setSongsPerPerson(parseInt(event.target.value))
                 }}
                 /> <br></br> <br></br>

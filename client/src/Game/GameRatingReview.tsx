@@ -79,8 +79,8 @@ function VerticalBar({count, heightPercent, color}: {count?: number, heightPerce
 
     return (
         <>
-            <div className="bar-container">
-                <div className="bar" style={style}>
+            <div className="rating-bar-container">
+                <div className="rating-bar" style={style}>
                 {/* <div className="number">{number}</div> */}
                 
                 </div>

@@ -29,10 +29,11 @@ export default class Player {
     }
 
     guessSong(song: Song, songSubmitter: Player, guess: {playerName: string, time: number}) {
+        // update guess distribution
+        song.guessDistribution[guess.playerName] += 1
         // if the player guessed correctly, give points
         if (guess.playerName == songSubmitter.name) {
             this.guessScore += 1
-            song.guessDistribution[guess.playerName] += 1
             return true
         }
         return false

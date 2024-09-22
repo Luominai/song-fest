@@ -7,9 +7,12 @@ describe('<GameGuessingReview />', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
     cy.mount(<GameGuessingReview mock={{
-        "ashley": 200,
+        "ashley": 3,
         "ryan": 2,
-        "kevin": 17
+        "kevin": 5,
+        "michael": 4,
+        "steph": 1,
+        "jessie": 3
     }}/>)
   })
 })

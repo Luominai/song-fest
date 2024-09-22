@@ -1,13 +1,9 @@
-.bar {
+.guessing-bar {
     border-radius: 0 20px 20px 0;
     transition: width 0.5s;
 }
 
-.bars {
-    display: flex;
-}
-
-.bar-container {
+.guessing-bar-container {
     height: 20px;
     width: 200px;
     display: flex;

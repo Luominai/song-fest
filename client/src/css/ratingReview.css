@@ -1,4 +1,4 @@
-.bar {
+.rating-bar {
     border-radius: 20px 20px 0 0;
     transition: height 0.5s;
 }
@@ -7,15 +7,11 @@
     display: flex;
 }
 
-.bar-container {
+.rating-bar-container {
     height: 200px;
     width: 40px;
     display: flex;
     flex-direction: column-reverse;
-}
-
-.bar:hover {
-    height: 100%;   
 }
 
 .buttonContainer {

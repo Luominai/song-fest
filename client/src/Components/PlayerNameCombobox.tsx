@@ -19,7 +19,7 @@ export default function PlayerNameCombobox({onChange = () => {}, enableDynamicOp
         <p>Name:</p>
         <Combobox onChange={onChange} onClose={() => setQuery("")} immediate>
             {/* the query state variable updates to match what the user types */}
-            <ComboboxInput onChange={(event) => setQuery(event.target.value)} className={"name"}/>
+            <ComboboxInput onChange={(event) => setQuery(event.target.value)} className={"name"} autoComplete="off"/>
             <ComboboxOptions anchor="bottom start" className=" group border-[3px] border-[#676BC9] bg-[#676BC9] rounded-lg w-[var(--input-width)] text-center [--anchor-gap:3px] scrollbar empty:invisible [--anchor-max-height:80px] hover:text-white">
                 {/* dynamically create an option based off what the user is typing. */}
                 {/* this option will show if the query is not whitespace and if the query does not match an existing participant*/}

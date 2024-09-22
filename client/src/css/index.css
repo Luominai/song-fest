@@ -59,12 +59,16 @@ button {
   transition: border-color 0.25s;
   color: white;
 }
-button:hover {
-  border-color: #5759b9;
+button:hover,
+button:active {
+  background-color: rgba(89,92,169,255)
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+button:disabled {
+    opacity: 70%;
 }
 
 input {

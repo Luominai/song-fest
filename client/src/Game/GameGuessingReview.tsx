@@ -29,26 +29,28 @@ export default function GameGuessingReview({mock}: {mock?: Record<string, number
     return (
         <>
             <h3 className="header">Guessing Summary</h3>
-            <div style={{height: 600, width:200, overflow: "scroll"}}>
-                {Object.entries(distributions).map(([name, guessCount]) => {
+            <div style={{height: "100px", width: "200px", overflow: "scroll", scrollbarWidth: "thin"}}>
+                {Object.entries(distributions).sort((a, b) => {
+                    return b[1] - a[1]
+                })
+                .map(([name, guessCount]) => {
                     return (
                         <HorizontalBar label={name} count={guessCount} percent={guessCount / totalGuesses}/>
-                        // <div style={{width: "100%"}}>
-                        //     {name}: {guessCount}
-                        // </div>
                     )
                 })}
             </div>
-            <button
-            className="nextPhase"
-            type="button"
-            onClick={() => {
-                // gameState?.emitFunctions.nextPhase()
-                socket.emit("nextPhase")
-            }}
-            >
-                next
-            </button>
+            <div className="buttonContainer">
+                <button
+                className="nextPhase"
+                type="button"
+                onClick={() => {
+                    // gameState?.emitFunctions.nextPhase()
+                    socket.emit("nextPhase")
+                }}
+                >
+                    next
+                </button>
+            </div>
         </>
     )
 }
@@ -69,8 +71,8 @@ function HorizontalBar({label, count, percent}: {label: string, count: number, p
             <div className="name-label">
                 {label}
             </div>
-            <div className="bar-container">
-                <div className="bar" style={style}>
+            <div className="guessing-bar-container">
+                <div className="guessing-bar" style={style}>
                 {/* <div className="number">{number}</div> */}
                 
                 </div>
