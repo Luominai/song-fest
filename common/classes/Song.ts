@@ -58,7 +58,7 @@ export default class Song {
     
         // get specific parts of data
         this.title = data.items[0].snippet.title
-        this.thumbnail = data.items[0].snippet.thumbnails.default.url
+        this.thumbnail = data.items[0].snippet.thumbnails.medium.url
     }
 
     // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
