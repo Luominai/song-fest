@@ -9,5 +9,7 @@
       "forceConsistentCasingInFileNames": true,
       "composite": true,
       "strictPropertyInitialization": false,
+      "outDir": "./lib/",
+      "rootDir": "./"
     }
 }

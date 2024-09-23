@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Player, Song } from "../../../common"
-import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, Table, TableOptions, useReactTable } from "@tanstack/react-table"
 import { socket } from "../Socket"
 
 const songColumnHelper = createColumnHelper<Song>()
@@ -54,13 +54,16 @@ const playerColumns = [
 export default function GameSummary({mock}: {mock?: {songs: Song[], players: Player[]}}) {
     const gameSummaryData = useRef<{songs: Song[], players: Player[]} | null>(mock ?? null)
 
-    const [data, setData] = useState<any[]>([])
-    const [columns, setColumns] = useState<any[]>([])
-    const [mode, setMode] = useState("songs")
+    const playersTable = useReactTable({
+        data: gameSummaryData.current?.players ?? [],
+        columns: playerColumns,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel()
+    })
 
-    const table = useReactTable({
-        data,
-        columns,
+    const songsTable = useReactTable({
+        data: gameSummaryData.current?.songs ?? [],
+        columns: songColumns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel()
     })
@@ -81,69 +84,49 @@ export default function GameSummary({mock}: {mock?: {songs: Song[], players: Pla
         }
     }, [socket])
 
-    // when the tab changes, update the columns used
-    useEffect(() => {
-        if (!gameSummaryData.current) {
-            return
-        }
-        if (mode == "songs") {
-            setData(gameSummaryData.current?.songs)
-            setColumns(songColumns)
-        }
-        else if (mode == "players") {
-            setData(gameSummaryData.current.players)
-            setColumns(playerColumns)
-        }
-    }, [mode])
-
     return (
         <>
-            <button
-            type="button"
-            onClick={() => setMode("players")}
-            >
-                players
-            </button>
-            <button
-            type="button"
-            onClick={() => setMode("songs")}
-            >
-                songs
-            </button>
-            <div>
-                <table>
-                    {/* Table Headers */}
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup) => 
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => 
-                                    <th key={header.id}>
-                                        {flexRender(
-                                            header.column.columnDef.header, 
-                                            header.getContext()
-                                        )}
-                                    </th>
-                                )}
-                            </tr>
-                        )}
-                    </thead>
-                    {/* Table Cells */}
-                    <tbody>
-                        {table.getRowModel().rows.map((row) => 
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map((cell) =>
-                                    <td>
-                                        {flexRender(
-                                            cell.column.columnDef.cell, 
-                                            cell.getContext()
-                                        )}
-                                    </td>
-                                )}
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            <BasicTable tableData={playersTable}/>
+            <BasicTable tableData={songsTable}/>
         </>
+    )
+}
+
+function BasicTable({tableData}: {tableData: Table<any>}) {
+    return (
+        <div>
+            <table>
+                {/* Table Headers */}
+                <thead>
+                    {tableData.getHeaderGroups().map((headerGroup) => 
+                        <tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => 
+                                <th key={header.id}>
+                                    {flexRender(
+                                        header.column.columnDef.header, 
+                                        header.getContext()
+                                    )}
+                                </th>
+                            )}
+                        </tr>
+                    )}
+                </thead>
+                {/* Table Cells */}
+                <tbody>
+                    {tableData.getRowModel().rows.map((row) => 
+                        <tr key={row.id}>
+                            {row.getVisibleCells().map((cell) =>
+                                <td>
+                                    {flexRender(
+                                        cell.column.columnDef.cell, 
+                                        cell.getContext()
+                                    )}
+                                </td>
+                            )}
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
     )
 }
