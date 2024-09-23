@@ -51,8 +51,8 @@ const playerColumns = [
     })
 ]
 
-export default function GameSummary() {
-    const gameSummaryData = useRef<{songs: Song[], players: Player[]} | null>(null)
+export default function GameSummary({mock}: {mock?: {songs: Song[], players: Player[]}}) {
+    const gameSummaryData = useRef<{songs: Song[], players: Player[]} | null>(mock ?? null)
 
     const [data, setData] = useState<any[]>([])
     const [columns, setColumns] = useState<any[]>([])
@@ -67,7 +67,9 @@ export default function GameSummary() {
 
     // on render, fetch the song and player data from server
     useEffect(() => {
-        socket.emit("getGameSummaryData")
+        if (!gameSummaryData) {
+            socket.emit("getGameSummaryData")
+        }
     }, [])
     useEffect(() => {
         function setGameSummaryData(data: {songs: Song[],players: Player[]}) {

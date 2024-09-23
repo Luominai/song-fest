@@ -67,7 +67,7 @@ function HorizontalBar({label, count, percent}: {label: string, count: number, p
     })
 
     return (
-        <div style={{display: "flex"}}>
+        <div style={{display: "flex", alignItems: "center"}}>
             <div className="name-label">
                 {label}
             </div>

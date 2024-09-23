@@ -4,7 +4,7 @@
 }
 
 .guessing-bar-container {
-    height: 20px;
+    height: 40px;
     width: 200px;
     display: flex;
     flex-direction: row;
@@ -28,6 +28,8 @@
 
 .number-label {
     text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
     font-size: 11px;
 }
 
