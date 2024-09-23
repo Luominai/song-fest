@@ -29,9 +29,8 @@ export default class Song {
         this.initialized = false
     }
     
-    async init(url: string, submitterName: string, startSeconds: number, endSeconds: number) {
+    async init(url: string, startSeconds: number, endSeconds: number) {
         this.url = url
-        this.submitterName = submitterName
         this.startSeconds = startSeconds
         this.endSeconds = endSeconds
         this.videoId = getYoutubeId(url)

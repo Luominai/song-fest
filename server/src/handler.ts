@@ -46,7 +46,7 @@ export default function registerHandler(socket: Socket<ClientToServerEvents, Ser
         const player = songfest.players.find((entry) => entry.name == data.name)
         // initialize the songs in player using the given data
         const songPromises: Promise<void>[] = player.songs.map((song: Song, index: number) => {
-            return song.init(data.songs[index].url, data.name, data.songs[index].startSeconds, data.songs[index].endSeconds)
+            return song.init(data.songs[index].url, data.songs[index].startSeconds, data.songs[index].endSeconds)
         })
         await Promise.all(songPromises).then((_) => {
             console.dir(player.songs)
