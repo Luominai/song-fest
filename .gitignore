@@ -138,3 +138,4 @@ common/index.d.ts
 common/index.d.ts.map
 common/index.js
 common/apikey.*
+common/lib/
