@@ -12,14 +12,14 @@ export default function HorizontalBar({label, count, percent, height = 40, width
 
     useEffect(() => {
         setStyle({...style, width: `${2 + (98 * percent)}%`} )
-    })
+    }, [])
 
     return (
         <div style={{display: "flex", alignItems: "center"}}>
             {label && <div style={{
                 fontSize: `${fontSize}px`,
                 textAlign: "center",
-                width: `${width}px`,
+                height: `${height}px`,
                 overflowX: "hidden"
             }}>
                 {label}

@@ -48,7 +48,7 @@ export default class Song {
             params: {
                 id: this.videoId,
                 part: "snippet",
-                fields: "items(snippet(title,thumbnails(default)))",
+                fields: "items(snippet(title,thumbnails))",
                 key: youtubeApiKey
             }
         })

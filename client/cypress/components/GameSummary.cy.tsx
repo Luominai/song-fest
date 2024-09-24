@@ -8,8 +8,8 @@ const mockSong = new Song("wario")
 mockSong.thumbnail = "https://i.ytimg.com/vi/AYtZ7GFV9ys/mqdefault.jpg"
 mockSong.startSeconds = 0;
 mockSong.endSeconds = 15
-mockSong.title = "it's nesting season"
-mockSong.likedScore = new Score(1, 2, 3)
+mockSong.title = "it's nesting season birds birds baababab bbbbbbb"
+mockSong.likedScore = new Score(0, 0, 6)
 mockSong.themeScore = new Score(2, 1, 3)
 
 const mockPlayer = new Player("wario", 1)
