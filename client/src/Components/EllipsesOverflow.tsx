@@ -12,6 +12,7 @@ export default function EllipsesOverflow({text, maxHeight, width}: {text: string
         if (!element.current?.getBoundingClientRect()) {
             return
         }
+        // if the height is over the max, toggle the truncating on
         if (element.current?.getBoundingClientRect().height > maxHeight) {
             toggle.current = true;
         }
@@ -21,7 +22,7 @@ export default function EllipsesOverflow({text, maxHeight, width}: {text: string
         if (!element.current?.getBoundingClientRect()) {
             return
         }
-        if (!toggle) {
+        if (!toggle.current) {
             return
         }
         // if the pointers cross or overlap, stop
@@ -46,6 +47,7 @@ export default function EllipsesOverflow({text, maxHeight, width}: {text: string
             // add ellipses at the middle and try it
             setInnerText(text.slice(0, middle.current) + "...")
         }
+        toggle.current = false
     })
 
     return (

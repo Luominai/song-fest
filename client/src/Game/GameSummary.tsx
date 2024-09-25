@@ -13,7 +13,7 @@ const songColumns = [
         header: "Song",
         cell: props => <div style={{display: "flex", alignItems: "center", gap: "10px"}}>
             <img src={props.getValue().thumbnail} style={{height: "63px", width: "112px", margin: "auto", borderRadius: "10px"}}/>
-            <div style={{display: "flex", flexDirection: "column", height: "100%", fontSize: "10px", justifyContent: "space-between"}}>
+            <div style={{display: "flex", flexDirection: "column", height: "100%", fontSize: "10px", justifyContent: "space-between", textAlign: "initial"}}>
                 {/* <span style={{width: "128px", height: "3em", textWrap: "wrap"}}
                 onLoad={(event) => {
                     event.currentTarget.innerHTML = "overflow"
