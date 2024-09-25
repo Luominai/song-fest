@@ -20,7 +20,7 @@ describe('<GameSummary />', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
     cy.mount(<GameSummary mock={{
-        songs: [mockSong, mockSong, mockSong],
+        songs: [mockSong, mockSong, mockSong, mockSong, mockSong, mockSong, mockSong],
         players: [mockPlayer, mockPlayer, mockPlayer]
     }}/>)
   })

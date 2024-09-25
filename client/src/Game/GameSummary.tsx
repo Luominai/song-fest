@@ -14,14 +14,6 @@ const songColumns = [
         cell: props => <div style={{display: "flex", alignItems: "center", gap: "10px"}}>
             <img src={props.getValue().thumbnail} style={{height: "63px", width: "112px", margin: "auto", borderRadius: "10px"}}/>
             <div style={{display: "flex", flexDirection: "column", height: "100%", fontSize: "10px", justifyContent: "space-between", textAlign: "initial"}}>
-                {/* <span style={{width: "128px", height: "3em", textWrap: "wrap"}}
-                onLoad={(event) => {
-                    event.currentTarget.innerHTML = "overflow"
-                    if (event.currentTarget.getBoundingClientRect().height > 10) {
-                        event.currentTarget.textContent = "overflow"
-                    }
-                }}
-                >{props.getValue().title}</span> */}
                 <EllipsesOverflow text={props.getValue().title} maxHeight={36} width={128}/>
                 <div style={{fontSize: "8px"}}>submitted by: <br></br> {props.getValue().submitter}</div>
             </div>
@@ -52,7 +44,7 @@ const songColumns = [
                 <VerticalBar count={props.getValue().low} percent={props.getValue().low/props.getValue().total} color="rgb(255,96,96,255)" height={50} width={20} fontSize={10}/>
             </div>
             <div style={{fontSize: "10px", textAlign: "center"}}>
-                Liked: {props.getValue().low + props.getValue().mid * 2 + props.getValue().high * 3}
+                Theme: {props.getValue().low + props.getValue().mid * 2 + props.getValue().high * 3}
             </div>
         </div>,
         sortDescFirst: true
@@ -63,7 +55,9 @@ const playerColumnHelper = createColumnHelper<Player>()
 const playerColumns = [
     playerColumnHelper.accessor("name", {
         header: "Name",
-        cell: props => <span>{props.getValue()}</span>
+        cell: props => <div>
+            {props.getValue()}
+        </div>
     }),
     playerColumnHelper.accessor(row => {return {liked: row.likedScore, theme: row.themeScore, guess: row.guessScore}}, {
         header: "Score",
@@ -78,6 +72,7 @@ const playerColumns = [
 
 export default function GameSummary({mock}: {mock?: {songs: Song[], players: Player[]}}) {
     const [gameSummaryData, setGameSummaryData] = useState<{songs: Song[], players: Player[]} | null>(mock ?? null)
+    const [mode, setMode] = useState("songs")
 
     const playersTable = useReactTable({
         data: gameSummaryData?.players ?? [],
@@ -106,13 +101,29 @@ export default function GameSummary({mock}: {mock?: {songs: Song[], players: Pla
         }
     }, [socket])
 
-    return (
-        <div style={{display: "flex"}}>
-            {/* <BasicTable tableData={playersTable}/> */}
-            {/* <BasicTable tableData={songsTable}/> */}
-            <CoolerTable tableData={songsTable}/>
+    return <>
+        <div style={{display: "flex", flexDirection: "column", justifyContent: "start", height: "60vh", width: "450px"}}>
+            <div style={{display: "flex", width: "150px"}}>
+                <button style={{borderTopRightRadius: "0px", borderBottomRightRadius: "0px", width: "50%", opacity: mode == "songs" ? "100%" : "70%"}}
+                onClick={() => setMode("songs")}
+                >
+                    Songs
+                </button>
+                <button style={{borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px", width: "50%", opacity: mode == "players" ? "100%" : "70%"}}
+                onClick={() => setMode("players")}
+                >
+                    Players
+                </button>
+            </div>
+            <div style={{display: mode == "players" ? "block" : "none", overflow: "scroll"}}>
+                <CoolerTable tableData={playersTable}/>
+            </div>
+            <div style={{display: mode == "songs" ? "block" : "none", overflow: "scroll"}}>
+                <CoolerTable tableData={songsTable}/>
+            </div>
         </div>
-    )
+    </>
+    
 }
 
 function CoolerTable({tableData}: {tableData: Table<any>}) {
